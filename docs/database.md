@@ -32,6 +32,7 @@ erDiagram
     attempts ||--o{ mistakes : "содержит"
     dialog_messages ||--o{ mistakes : "содержит"
     error_types ||--o{ mistakes : "классифицирует"
+    error_types |o--o{ exercises : "проверяется в"
 
     words ||--o{ user_words : ""
     user_words ||--o{ word_reviews : "история повторений"
@@ -66,6 +67,7 @@ erDiagram
     exercises {
         bigint id PK
         bigint topic_id FK
+        bigint error_type_id FK "NULL: какой навык проверяет"
         exercise_type type
         text prompt
         text explanation
@@ -188,6 +190,7 @@ erDiagram
 | `dialogs` | `CHECK (ended_at IS NULL OR ended_at >= started_at)` | Диалог не заканчивается раньше начала |
 | `words` | `UNIQUE (text, part_of_speech, translation)` | Нет дублей одного значения слова |
 | `lesson_plan_items` | `UNIQUE (plan_id, position)` | Порядок пунктов плана однозначен |
+| `exercises` | `UNIQUE (topic_id, prompt)` | В теме нет двух одинаковых заданий; это же ключ для повторной загрузки контента |
 | все enum-поля | `ENUM` PostgreSQL | Например, `source` принимает только `web` / `bot` |
 
 Удаление пользователя каскадно удаляет все его данные (`ON DELETE CASCADE`); удалить тему или упражнение, на которые есть ответы, нельзя (`RESTRICT`) — история обучения не теряется.
@@ -198,6 +201,7 @@ erDiagram
 
 - **Один `exercise_answers` для всех типов упражнений.** Для упражнений с выбором это показываемые варианты (`is_correct` отмечает верный). Для упражнений с вводом это список принимаемых верных ответов («don't» и «do not»). Так нет дублирования верного ответа в двух местах.
 - **Ошибки из упражнений и из диалогов — в одной таблице `mistakes`.** Ровно одно из полей `attempt_id` / `dialog_message_id` заполнено: `CHECK (num_nonnulls(attempt_id, dialog_message_id) = 1)`. Благодаря этому адаптивный наставник анализирует все ошибки пользователя одним запросом.
+- **`exercises.error_type_id`** — какой навык проверяет упражнение: неверный ответ сразу записывается в `mistakes` как ошибка этого типа. Это не дублирует `error_types.topic_id`: там — где навык *объясняется*, здесь — где он *проверяется*.
 - **`error_types.topic_id`** связывает тип ошибки с темой, где он объясняется. Отсюда рекомендация: «много ошибок `articles` → повторить тему "Articles"».
 - **`user_words` хранит состояние алгоритма SM-2**, а `word_reviews` — полную историю повторений. Бот выбирает слова запросом `WHERE next_review_at <= now()`.
 - **Сайт и бот пишут в одни таблицы**, различие только в поле `source`. Это и есть «одна система».
