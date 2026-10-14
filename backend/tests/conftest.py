@@ -4,7 +4,12 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import text
 from sqlalchemy.engine import make_url
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from app.core.config import settings
 from app.core.db import get_session
@@ -36,6 +41,12 @@ async def engine() -> AsyncIterator[AsyncEngine]:
     await engine.dispose()
 
 
+async def _truncate_all(engine: AsyncEngine) -> None:
+    tables = ", ".join(t.name for t in Base.metadata.sorted_tables)
+    async with engine.begin() as conn:
+        await conn.execute(text(f"TRUNCATE {tables} RESTART IDENTITY CASCADE"))
+
+
 @pytest.fixture
 async def client(engine: AsyncEngine) -> AsyncIterator[AsyncClient]:
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
@@ -48,7 +59,24 @@ async def client(engine: AsyncEngine) -> AsyncIterator[AsyncClient]:
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
         yield c
     app.dependency_overrides.clear()
+    await _truncate_all(engine)
 
-    tables = ", ".join(t.name for t in Base.metadata.sorted_tables)
-    async with engine.begin() as conn:
-        await conn.execute(text(f"TRUNCATE {tables} RESTART IDENTITY CASCADE"))
+
+@pytest.fixture
+async def db(engine: AsyncEngine) -> AsyncIterator[AsyncSession]:
+    """Прямой доступ к тестовой БД — подготовить данные или проверить, что записалось."""
+    async with async_sessionmaker(engine, expire_on_commit=False)() as session:
+        yield session
+    await _truncate_all(engine)
+
+
+@pytest.fixture
+async def auth_headers(client: AsyncClient) -> dict[str, str]:
+    """Заголовок авторизации зарегистрированного тестового пользователя."""
+    credentials = {"email": "learner@example.com", "password": "learner-pass"}
+    await client.post("/auth/register", json={**credentials, "display_name": "Learner"})
+    response = await client.post(
+        "/auth/login",
+        data={"username": credentials["email"], "password": credentials["password"]},
+    )
+    return {"Authorization": f"Bearer {response.json()['access_token']}"}

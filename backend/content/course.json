@@ -1,0 +1,455 @@
+{
+  "error_types": [
+    {
+      "code": "articles",
+      "name": "Артикли",
+      "topic": "Articles: a / an / the"
+    },
+    {
+      "code": "present_simple",
+      "name": "Present Simple",
+      "topic": "Present Simple"
+    },
+    {
+      "code": "there_is_are",
+      "name": "There is / There are",
+      "topic": "There is / There are"
+    },
+    {
+      "code": "prepositions_time",
+      "name": "Предлоги времени",
+      "topic": "Prepositions of time: in / on / at"
+    },
+    { "code": "past_simple", "name": "Past Simple", "topic": "Past Simple" },
+    { "code": "word_order", "name": "Порядок слов", "topic": null },
+    { "code": "vocabulary", "name": "Лексика", "topic": null },
+    { "code": "spelling", "name": "Орфография", "topic": null }
+  ],
+  "topics": [
+    {
+      "title": "Articles: a / an / the",
+      "cefr_level": "A1",
+      "position": 1,
+      "theory": "# Артикли a / an / the\n\n**a / an** — неопределённый артикль: «какой-то, один из». Ставится перед исчисляемым существительным в единственном числе, когда предмет упоминается впервые.\n\n- **a** — перед согласным *звуком*: *a cat, a university* (/juː/)\n- **an** — перед гласным *звуком*: *an apple, an hour* (h не читается)\n\n**the** — определённый артикль: «тот самый», уже известный собеседнику предмет или единственный в своём роде.\n\n- *I have a cat. **The** cat is black.*\n- *the sun, the moon*\n\n**Без артикля:** имена, большинство стран и городов, множественное число и неисчисляемые существительные в общем смысле: *I like music. Cats are cute.*",
+      "words": [
+        {
+          "text": "apple",
+          "part_of_speech": "noun",
+          "translation": "яблоко",
+          "transcription": "/ˈæp.əl/",
+          "example": "An apple a day keeps the doctor away."
+        },
+        {
+          "text": "hour",
+          "part_of_speech": "noun",
+          "translation": "час",
+          "transcription": "/ˈaʊ.ər/",
+          "example": "The lesson lasts an hour."
+        },
+        {
+          "text": "university",
+          "part_of_speech": "noun",
+          "translation": "университет",
+          "transcription": "/ˌjuː.nɪˈvɜː.sə.ti/",
+          "example": "She studies at a university in Moscow."
+        },
+        {
+          "text": "elephant",
+          "part_of_speech": "noun",
+          "translation": "слон",
+          "transcription": "/ˈel.ɪ.fənt/",
+          "example": "An elephant never forgets."
+        },
+        {
+          "text": "sun",
+          "part_of_speech": "noun",
+          "translation": "солнце",
+          "transcription": "/sʌn/",
+          "example": "The sun is shining."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "I saw ___ elephant at the zoo.",
+          "options": ["a", "an", "the"],
+          "correct": ["an"],
+          "explanation": "Elephant начинается с гласного звука — нужен an."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "She is ___ university student.",
+          "options": ["a", "an", "the"],
+          "correct": ["a"],
+          "explanation": "University начинается со звука /juː/ — это согласный звук, поэтому a, несмотря на букву u."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "I have a dog. ___ dog is very friendly.",
+          "correct": ["The"],
+          "explanation": "Собаку уже упомянули — теперь это «та самая» собака: the."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "We waited for ___ hour.",
+          "correct": ["an"],
+          "explanation": "В hour буква h не читается, слово начинается с гласного звука — an."
+        },
+        {
+          "type": "translate",
+          "prompt": "Солнце встаёт на востоке.",
+          "correct": ["The sun rises in the east"],
+          "explanation": "Солнце единственное — the sun; стороны света тоже употребляются с the."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "I like ___ music.",
+          "options": ["a", "the", "(без артикля)"],
+          "correct": ["(без артикля)"],
+          "explanation": "Music в общем смысле — неисчисляемое существительное, артикль не нужен."
+        }
+      ]
+    },
+    {
+      "title": "Present Simple",
+      "cefr_level": "A1",
+      "position": 2,
+      "theory": "# Present Simple\n\nПростое настоящее время — для привычек, регулярных действий и фактов: *I drink coffee every morning. Water boils at 100 °C.*\n\n**Утверждение:** глагол в начальной форме, но с **he / she / it** добавляется **-s / -es**:\n\n- *I work → she work**s***\n- *go → go**es**, watch → watch**es**, study → stud**ies***\n\n**Отрицание и вопрос** — с помощью **do / does** (does — для he / she / it), а основной глагол уже без -s:\n\n- *She **doesn't like** tea.* (не ~~doesn't likes~~)\n- ***Does** he **play** football?*\n\nСлова-подсказки: *always, usually, often, sometimes, never, every day*. Наречия частоты стоят перед основным глаголом: *I usually get up at seven.*",
+      "words": [
+        {
+          "text": "usually",
+          "part_of_speech": "adverb",
+          "translation": "обычно",
+          "transcription": "/ˈjuː.ʒu.ə.li/",
+          "example": "I usually walk to work."
+        },
+        {
+          "text": "always",
+          "part_of_speech": "adverb",
+          "translation": "всегда",
+          "transcription": "/ˈɔːl.weɪz/",
+          "example": "She always smiles."
+        },
+        {
+          "text": "watch",
+          "part_of_speech": "verb",
+          "translation": "смотреть",
+          "transcription": "/wɒtʃ/",
+          "example": "We watch films on Fridays."
+        },
+        {
+          "text": "live",
+          "part_of_speech": "verb",
+          "translation": "жить",
+          "transcription": "/lɪv/",
+          "example": "They live in a small town."
+        },
+        {
+          "text": "every",
+          "part_of_speech": "determiner",
+          "translation": "каждый",
+          "transcription": "/ˈev.ri/",
+          "example": "I read every day."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "fill_gap",
+          "prompt": "She ___ (work) in a bank.",
+          "correct": ["works"],
+          "explanation": "She — третье лицо единственного числа, добавляем -s: works."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "___ your brother live in London?",
+          "options": ["Do", "Does", "Is"],
+          "correct": ["Does"],
+          "explanation": "Your brother = he, поэтому вопрос строится с does."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "He ___ (not / like) coffee.",
+          "correct": ["doesn't like", "does not like"],
+          "explanation": "Отрицание с he: doesn't + глагол без -s."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "My cat ___ fish every day.",
+          "options": ["eat", "eats", "eating"],
+          "correct": ["eats"],
+          "explanation": "My cat = it, поэтому eats."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Составьте предложение: во сколько вы обычно встаёте.",
+          "correct": ["I usually get up at seven"],
+          "explanation": "Наречие частоты usually стоит перед основным глаголом."
+        },
+        {
+          "type": "translate",
+          "prompt": "Он смотрит телевизор каждый вечер.",
+          "correct": [
+            "He watches TV every evening",
+            "He watches television every evening"
+          ],
+          "explanation": "Watch → watches: после -ch добавляем -es."
+        }
+      ]
+    },
+    {
+      "title": "There is / There are",
+      "cefr_level": "A1",
+      "position": 3,
+      "theory": "# There is / There are\n\nКонструкция сообщает, что что-то **где-то есть, находится**. По-русски мы обычно начинаем с места: «На столе книга». По-английски — с there: *There is a book on the table.*\n\n- **There is** + единственное число или неисчисляемое: *There is a cat in the garden. There is some milk in the fridge.*\n- **There are** + множественное число: *There are two cats in the garden.*\n\n**Отрицание:** *There isn't / There aren't*: *There aren't any shops here.*\n\n**Вопрос:** *Is there…? / Are there…?*: *Is there a bank near here?*",
+      "words": [
+        {
+          "text": "museum",
+          "part_of_speech": "noun",
+          "translation": "музей",
+          "transcription": "/mjuːˈziː.əm/",
+          "example": "The museum opens at ten."
+        },
+        {
+          "text": "shelf",
+          "part_of_speech": "noun",
+          "translation": "полка",
+          "transcription": "/ʃelf/",
+          "example": "Put the box on the shelf."
+        },
+        {
+          "text": "fridge",
+          "part_of_speech": "noun",
+          "translation": "холодильник",
+          "transcription": "/frɪdʒ/",
+          "example": "There is some cheese in the fridge."
+        },
+        {
+          "text": "chair",
+          "part_of_speech": "noun",
+          "translation": "стул",
+          "transcription": "/tʃeər/",
+          "example": "This chair is very comfortable."
+        },
+        {
+          "text": "near",
+          "part_of_speech": "preposition",
+          "translation": "рядом с",
+          "transcription": "/nɪər/",
+          "example": "I live near the station."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "There ___ three apples on the table.",
+          "options": ["is", "are", "be"],
+          "correct": ["are"],
+          "explanation": "Three apples — множественное число, поэтому there are."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "There ___ some milk in the fridge.",
+          "options": ["is", "are", "am"],
+          "correct": ["is"],
+          "explanation": "Milk — неисчисляемое существительное, с ним there is."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "___ there a park near your house?",
+          "correct": ["Is"],
+          "explanation": "В вопросе глагол выходит на первое место; a park — единственное число, поэтому Is there."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "There ___ any chairs in the room. (отрицание)",
+          "correct": ["aren't", "are not"],
+          "explanation": "Chairs — множественное число, отрицание: there aren't."
+        },
+        {
+          "type": "translate",
+          "prompt": "В моём городе есть музей.",
+          "correct": [
+            "There is a museum in my town",
+            "There is a museum in my city",
+            "There's a museum in my town",
+            "There's a museum in my city"
+          ],
+          "explanation": "Сообщаем, что что-то где-то есть, — there is; место ставим в конец."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Составьте предложение о книгах на полке.",
+          "correct": ["There are many books on the shelf"],
+          "explanation": "There are + множественное число, место — в конце предложения."
+        }
+      ]
+    },
+    {
+      "title": "Prepositions of time: in / on / at",
+      "cefr_level": "A2",
+      "position": 4,
+      "theory": "# Предлоги времени in / on / at\n\nУдобное правило — «от большего к меньшему»:\n\n- **in** — длинные периоды: месяцы, годы, времена года, века, части дня: *in May, in 2025, in winter, in the morning*\n- **on** — дни и даты: *on Monday, on 8 March, on my birthday*\n- **at** — точное время и устойчивые выражения: *at 7 o'clock, at noon, at night, at the weekend* (брит.)\n\n**Без предлога** — перед *this, next, last, every*: *next week, last year, every Monday.*",
+      "words": [
+        {
+          "text": "birthday",
+          "part_of_speech": "noun",
+          "translation": "день рождения",
+          "transcription": "/ˈbɜːθ.deɪ/",
+          "example": "My birthday is in June."
+        },
+        {
+          "text": "weekend",
+          "part_of_speech": "noun",
+          "translation": "выходные",
+          "transcription": "/ˌwiːkˈend/",
+          "example": "What are you doing at the weekend?"
+        },
+        {
+          "text": "noon",
+          "part_of_speech": "noun",
+          "translation": "полдень",
+          "transcription": "/nuːn/",
+          "example": "Let's meet at noon."
+        },
+        {
+          "text": "meeting",
+          "part_of_speech": "noun",
+          "translation": "встреча, собрание",
+          "transcription": "/ˈmiː.tɪŋ/",
+          "example": "The meeting was very long."
+        },
+        {
+          "text": "be born",
+          "part_of_speech": "verb",
+          "translation": "родиться",
+          "transcription": "/bi bɔːn/",
+          "example": "She was born in Kazan."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "My birthday is ___ June.",
+          "options": ["in", "on", "at"],
+          "correct": ["in"],
+          "explanation": "Месяц — длинный период, поэтому in."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "The meeting starts ___ 9 o'clock.",
+          "options": ["in", "on", "at"],
+          "correct": ["at"],
+          "explanation": "Точное время — at."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "We don't go to school ___ Sunday.",
+          "correct": ["on"],
+          "explanation": "Дни недели — on."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "I like to read ___ the evening.",
+          "correct": ["in"],
+          "explanation": "Части дня (in the morning / afternoon / evening) — in. Но: at night."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "I'll see you ___ next week.",
+          "options": ["in", "on", "(без предлога)"],
+          "correct": ["(без предлога)"],
+          "explanation": "Перед next, last, this, every предлог не нужен."
+        },
+        {
+          "type": "translate",
+          "prompt": "Я родился в 2005 году.",
+          "correct": ["I was born in 2005"],
+          "explanation": "Год — in; «родиться» по-английски — be born: I was born."
+        }
+      ]
+    },
+    {
+      "title": "Past Simple",
+      "cefr_level": "A2",
+      "position": 5,
+      "theory": "# Past Simple\n\nПростое прошедшее время — для законченных действий в прошлом, часто с указанием времени: *yesterday, last week, in 2020, two days ago.*\n\n**Правильные глаголы** получают окончание **-ed**: *work → worked, play → played, study → studied, stop → stopped.*\n\n**Неправильные глаголы** нужно запомнить: *go → went, see → saw, have → had, buy → bought, eat → ate.*\n\n**Отрицание и вопрос** — с **did**, а основной глагол возвращается в начальную форму:\n\n- *I **didn't go** to work.* (не ~~didn't went~~)\n- ***Did** you **see** the film?*",
+      "words": [
+        {
+          "text": "yesterday",
+          "part_of_speech": "adverb",
+          "translation": "вчера",
+          "transcription": "/ˈjes.tə.deɪ/",
+          "example": "I was at home yesterday."
+        },
+        {
+          "text": "ago",
+          "part_of_speech": "adverb",
+          "translation": "назад (о времени)",
+          "transcription": "/əˈɡəʊ/",
+          "example": "I met him two years ago."
+        },
+        {
+          "text": "buy",
+          "part_of_speech": "verb",
+          "translation": "покупать",
+          "transcription": "/baɪ/",
+          "example": "I bought a new phone last week."
+        },
+        {
+          "text": "see",
+          "part_of_speech": "verb",
+          "translation": "видеть",
+          "transcription": "/siː/",
+          "example": "Did you see that?"
+        },
+        {
+          "text": "cinema",
+          "part_of_speech": "noun",
+          "translation": "кинотеатр",
+          "transcription": "/ˈsɪn.ə.mə/",
+          "example": "Let's go to the cinema."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "fill_gap",
+          "prompt": "Yesterday I ___ (go) to the cinema.",
+          "correct": ["went"],
+          "explanation": "Go — неправильный глагол: go → went."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "We ___ a great film last night.",
+          "options": ["see", "saw", "seen"],
+          "correct": ["saw"],
+          "explanation": "Seen — третья форма (Past Participle); в Past Simple нужна вторая: saw."
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "She ___ (not / buy) any bread.",
+          "correct": ["didn't buy", "did not buy"],
+          "explanation": "Отрицание в прошедшем: didn't + начальная форма глагола (не didn't bought)."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "___ you call your mom yesterday?",
+          "options": ["Do", "Did", "Were"],
+          "correct": ["Did"],
+          "explanation": "Yesterday — прошлое, вопрос с did."
+        },
+        {
+          "type": "translate",
+          "prompt": "Мы играли в футбол в субботу.",
+          "correct": ["We played football on Saturday"],
+          "explanation": "Play — правильный глагол: played; дни недели — с on."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Составьте предложение о том, что вы делали вчера вечером.",
+          "correct": ["I watched a film yesterday evening"],
+          "explanation": "Обычный порядок: подлежащее — сказуемое — дополнение — время."
+        }
+      ]
+    }
+  ]
+}
