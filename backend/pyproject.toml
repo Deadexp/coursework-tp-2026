@@ -10,6 +10,10 @@ dependencies = [
     "alembic>=1.14",
     "pydantic-settings>=2.6",
     "httpx>=0.28",
+    "email-validator>=2.2",
+    "pwdlib[argon2]>=0.2",
+    "pyjwt>=2.10",
+    "python-multipart>=0.0.20",
 ]
 
 [project.optional-dependencies]
@@ -24,6 +28,8 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
 
 [tool.ruff.lint.per-file-ignores]
 # Миграции генерирует Alembic — длинные строки там нормальны.

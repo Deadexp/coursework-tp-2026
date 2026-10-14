@@ -2,6 +2,7 @@ from collections.abc import AsyncIterator
 from datetime import datetime
 from typing import Annotated
 
+from fastapi import Depends
 from sqlalchemy import BigInteger, DateTime, Identity, MetaData, Text, func
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, mapped_column
@@ -36,3 +37,6 @@ class Base(DeclarativeBase):
 async def get_session() -> AsyncIterator[AsyncSession]:
     async with SessionLocal() as session:
         yield session
+
+
+SessionDep = Annotated[AsyncSession, Depends(get_session)]

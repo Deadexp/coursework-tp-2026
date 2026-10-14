@@ -34,6 +34,11 @@
 - Фронтенд: `cd frontend && npm run dev | npm run build | npm run lint`
 - Swagger: http://localhost:8000/docs
 
+## Авторизация
+- Вход по email + паролю, JWT access token (`Authorization: Bearer <token>`), пароли — argon2 (`app/core/security.py`).
+- Эндпоинт, которому нужен вошедший пользователь, принимает параметр `user: CurrentUser` из `app/modules/users/deps.py`.
+- Тесты работают в отдельной базе `<имя>_test` (см. `tests/conftest.py`), фикстура `client` очищает таблицы после каждого теста.
+
 ## Соглашения
 - Python 3.12, type hints везде, async для I/O.
 - Каждый новый эндпоинт — с тестом в `backend/tests/`.
