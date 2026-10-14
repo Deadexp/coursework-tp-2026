@@ -15,7 +15,7 @@
 - `app/modules/<домен>/` — по модулю на предметную область: `users`, `learning` (темы, упражнения, попытки, ошибки), `vocabulary`, `dialogs`, `recommendations`.
   Внутри модуля: `models.py` (SQLAlchemy), `schemas.py` (Pydantic), `service.py` (логика), `router.py` (эндпоинты).
 - Модули не лезут в таблицы друг друга напрямую — вызывают `service.py` другого модуля.
-- Новую модель обязательно импортировать в `app/models.py`, иначе Alembic её не увидит.
+- Новую модель обязательно импортировать в `app/models.py`, иначе Alembic и приложение её не увидят (`app/main.py` импортирует `app.models`; тест `test_app_startup.py` ловит забытые модели).
 - Общие перечисления — `app/core/enums.py`; в колонках использовать `pg_enum(...)` (хранит значения, а не имена).
 
 ## База данных
@@ -34,6 +34,12 @@
 - Фронтенд: `cd frontend && npm run dev | npm run build | npm run lint`
 - E2E-тесты сайта (нужна запущенная система): `cd frontend && npm run test:e2e`. Создают пользователей `e2e-*@example.com` в базе разработки.
 - Swagger: http://localhost:8000/docs
+- Загрузить учебный контент из `backend/content/course.json`: `docker compose run --rm api python -m app.seed` (повторный запуск безопасен)
+
+## Учебный контент
+- Темы, упражнения, слова и типы ошибок — в `backend/content/course.json`, а не в коде и не в миграциях. Формат проверяется Pydantic-моделями в `app/seed.py`.
+- Проверка ответов — `app/modules/learning/checking.py` (без учёта регистра, лишних пробелов, апострофов и точки в конце). Все допустимые варианты ответа перечислять в `correct`.
+- Правильные ответы клиент получает только в ответе на попытку, никогда — вместе с заданием.
 
 ## Фронтенд
 - Все запросы к API — через `request()` из `frontend/src/api/client.ts`: он подставляет токен и превращает ошибки в `ApiError` (с `fieldErrors` из 422).

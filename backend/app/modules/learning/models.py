@@ -1,4 +1,4 @@
-from sqlalchemy import CheckConstraint, ForeignKey, Index, Integer
+from sqlalchemy import CheckConstraint, ForeignKey, Index, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base, CreatedAt, IntPK
@@ -17,9 +17,12 @@ class Topic(Base):
 
 class Exercise(Base):
     __tablename__ = "exercises"
+    __table_args__ = (UniqueConstraint("topic_id", "prompt"),)
 
     id: Mapped[IntPK]
     topic_id: Mapped[int] = mapped_column(ForeignKey("topics.id"), index=True)
+    # Какой навык проверяет упражнение: неверный ответ записывается как ошибка этого типа.
+    error_type_id: Mapped[int | None] = mapped_column(ForeignKey("error_types.id"))
     type: Mapped[ExerciseType] = mapped_column(pg_enum(ExerciseType, "exercise_type"))
     prompt: Mapped[str]
     explanation: Mapped[str | None]
