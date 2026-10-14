@@ -24,3 +24,7 @@ select = ["E", "F", "I", "B", "UP"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+# Миграции генерирует Alembic — длинные строки там нормальны.
+"migrations/versions/*" = ["E501"]

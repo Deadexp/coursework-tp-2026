@@ -175,6 +175,25 @@ erDiagram
 | dialogs | `dialogs`, `dialog_messages` | Беседы с Virtual Native Speaker |
 | recommendations | `lesson_plans`, `lesson_plan_items` | Персональные планы занятий от адаптивного наставника |
 
+## Ограничения целостности
+
+Кроме первичных и внешних ключей, правила данных проверяет сама СУБД:
+
+| Таблица | Ограничение | Смысл |
+|---|---|---|
+| `mistakes` | `CHECK (num_nonnulls(attempt_id, dialog_message_id) = 1)` | Ошибка относится ровно к одному источнику |
+| `lesson_plan_items` | `CHECK target_matches_type` | Пункт типа `topic` ссылается на тему, `exercise` — на упражнение, остальные — ни на что |
+| `word_reviews` | `CHECK (quality BETWEEN 0 AND 5)` | Шкала оценки SM-2 |
+| `user_words` | `CHECK (ease_factor >= 1.3)`, неотрицательные интервалы | Корректное состояние SM-2 |
+| `dialogs` | `CHECK (ended_at IS NULL OR ended_at >= started_at)` | Диалог не заканчивается раньше начала |
+| `words` | `UNIQUE (text, part_of_speech, translation)` | Нет дублей одного значения слова |
+| `lesson_plan_items` | `UNIQUE (plan_id, position)` | Порядок пунктов плана однозначен |
+| все enum-поля | `ENUM` PostgreSQL | Например, `source` принимает только `web` / `bot` |
+
+Удаление пользователя каскадно удаляет все его данные (`ON DELETE CASCADE`); удалить тему или упражнение, на которые есть ответы, нельзя (`RESTRICT`) — история обучения не теряется.
+
+Реализация: модели SQLAlchemy в `backend/app/modules/*/models.py`, миграция — `backend/migrations/versions/`.
+
 ## Ключевые проектные решения
 
 - **Один `exercise_answers` для всех типов упражнений.** Для упражнений с выбором это показываемые варианты (`is_correct` отмечает верный). Для упражнений с вводом это список принимаемых верных ответов («don't» и «do not»). Так нет дублирования верного ответа в двух местах.
