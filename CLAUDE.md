@@ -32,7 +32,14 @@
 - Линт/формат Python: `docker compose run --rm api ruff check --fix . && docker compose run --rm api ruff format .`
 - Миграция: `docker compose run --rm api alembic revision --autogenerate -m "<msg>"`, затем `alembic upgrade head`
 - Фронтенд: `cd frontend && npm run dev | npm run build | npm run lint`
+- E2E-тесты сайта (нужна запущенная система): `cd frontend && npm run test:e2e`. Создают пользователей `e2e-*@example.com` в базе разработки.
 - Swagger: http://localhost:8000/docs
+
+## Фронтенд
+- Все запросы к API — через `request()` из `frontend/src/api/client.ts`: он подставляет токен и превращает ошибки в `ApiError` (с `fieldErrors` из 422).
+- Текущий пользователь и вход/выход — `useAuth()` из `src/auth/context.ts`. Закрытые страницы — внутри `<RequireAuth />` в `App.tsx`.
+- Интерфейс на русском. Цвета только через CSS-переменные из `src/index.css` (есть тёмная тема).
+- Название продукта — константа `APP_NAME` в `src/config.ts`.
 
 ## Авторизация
 - Вход по email + паролю, JWT access token (`Authorization: Bearer <token>`), пароли — argon2 (`app/core/security.py`).
