@@ -6,6 +6,13 @@
 
 ## ER-диаграмма
 
+![ER-диаграмма](images/er-diagram.png)
+
+Исходник диаграммы (Mermaid) — ниже; картинка сгенерирована из него командой `mmdc`.
+
+<details>
+<summary>Mermaid-код диаграммы</summary>
+
 ```mermaid
 erDiagram
     users ||--o{ telegram_link_codes : "получает"
@@ -153,6 +160,8 @@ erDiagram
         timestamptz done_at "NULL, пока не выполнено"
     }
 ```
+
+</details>
 
 Перечисления (`cefr` = A1..C2, `exercise_type`, `source`, `msg_role`, `plan_item_type`) — типы `ENUM` PostgreSQL.
 
