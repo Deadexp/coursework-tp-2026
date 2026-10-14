@@ -1,0 +1,19 @@
+# secrets
+.env
+.claude/settings.local.json
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# node
+node_modules/
+dist/
+
+# os / ide
+.DS_Store
+.idea/
+.vscode/

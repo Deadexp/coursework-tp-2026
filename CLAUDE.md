@@ -1,0 +1,37 @@
+# English Learning Platform (курсовая)
+
+Сайт + Telegram-бот для изучения английского с адаптивным обучением на основе LLM.
+Команда: 3 человека. Документация курсовой — в `docs/`.
+
+## Архитектура
+Клиент-сервер, backend — модульный монолит.
+- `backend/` — FastAPI, единственный владелец БД и бизнес-логики. Все клиенты ходят только через его REST API.
+- `frontend/` — React + TypeScript (Vite), SPA. Запросы к API через префикс `/api` (прокси Vite).
+- `bot/` — aiogram 3. **Никогда не обращается к БД напрямую**, только к API через `bot/api_client.py`.
+- `backend/app/llm/` — абстракция над LLM-провайдером (`LLMClient`). Остальной код не импортирует SDK провайдеров напрямую, только `get_llm()`.
+
+## Структура backend
+- `app/core/` — конфиг (`config.py`) и подключение к БД (`db.py`).
+- `app/modules/<домен>/` — по модулю на предметную область: `users`, `learning` (темы, упражнения, попытки, ошибки), `vocabulary`, `dialogs`, `recommendations`.
+  Внутри модуля: `models.py` (SQLAlchemy), `schemas.py` (Pydantic), `service.py` (логика), `router.py` (эндпоинты).
+- Модули не лезут в таблицы друг друга напрямую — вызывают `service.py` другого модуля.
+
+## База данных
+- PostgreSQL, SQLAlchemy 2.0 (async, `Mapped[...]`), миграции только через Alembic. Схему руками не менять.
+- Схема должна быть в 3НФ: производные значения (прогресс, статистика, % правильных) вычисляются запросами, а не хранятся.
+- ER-схема и обоснование нормализации — `docs/database.md`. При изменении моделей обновлять и его.
+
+## Команды
+- Всё целиком: `docker compose up --build`
+- Тесты backend: `docker compose run --rm api pytest`
+- Линт/формат Python: `docker compose run --rm api ruff check --fix . && docker compose run --rm api ruff format .`
+- Миграция: `docker compose run --rm api alembic revision --autogenerate -m "<msg>"`, затем `alembic upgrade head`
+- Фронтенд: `cd frontend && npm run dev | npm run build | npm run lint`
+- Swagger: http://localhost:8000/docs
+
+## Соглашения
+- Python 3.12, type hints везде, async для I/O.
+- Каждый новый эндпоинт — с тестом в `backend/tests/`.
+- Ответы LLM, которые разбирает код (ошибки, план занятия), запрашивать в JSON и валидировать Pydantic-схемой.
+- Секреты только в `.env` (не коммитится); новые переменные добавлять в `.env.example`.
+- Коммиты небольшие, сообщение на русском или английском в повелительном наклонении.
