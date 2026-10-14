@@ -15,9 +15,14 @@
 - `app/modules/<домен>/` — по модулю на предметную область: `users`, `learning` (темы, упражнения, попытки, ошибки), `vocabulary`, `dialogs`, `recommendations`.
   Внутри модуля: `models.py` (SQLAlchemy), `schemas.py` (Pydantic), `service.py` (логика), `router.py` (эндпоинты).
 - Модули не лезут в таблицы друг друга напрямую — вызывают `service.py` другого модуля.
+- Новую модель обязательно импортировать в `app/models.py`, иначе Alembic её не увидит.
+- Общие перечисления — `app/core/enums.py`; в колонках использовать `pg_enum(...)` (хранит значения, а не имена).
 
 ## База данных
 - PostgreSQL, SQLAlchemy 2.0 (async, `Mapped[...]`), миграции только через Alembic. Схему руками не менять.
+- `docker compose up` сам применяет миграции (`alembic upgrade head`) перед запуском API.
+- После autogenerate проверять миграцию глазами; в `downgrade` удалять созданные ENUM-типы (Alembic этого не делает).
+- Проверка, что модели и миграции совпадают: `docker compose run --rm api alembic check`.
 - Схема должна быть в 3НФ: производные значения (прогресс, статистика, % правильных) вычисляются запросами, а не хранятся.
 - ER-схема и обоснование нормализации — `docs/database.md`. При изменении моделей обновлять и его.
 
@@ -28,6 +33,11 @@
 - Миграция: `docker compose run --rm api alembic revision --autogenerate -m "<msg>"`, затем `alembic upgrade head`
 - Фронтенд: `cd frontend && npm run dev | npm run build | npm run lint`
 - Swagger: http://localhost:8000/docs
+
+## Авторизация
+- Вход по email + паролю, JWT access token (`Authorization: Bearer <token>`), пароли — argon2 (`app/core/security.py`).
+- Эндпоинт, которому нужен вошедший пользователь, принимает параметр `user: CurrentUser` из `app/modules/users/deps.py`.
+- Тесты работают в отдельной базе `<имя>_test` (см. `tests/conftest.py`), фикстура `client` очищает таблицы после каждого теста.
 
 ## Соглашения
 - Python 3.12, type hints везде, async для I/O.

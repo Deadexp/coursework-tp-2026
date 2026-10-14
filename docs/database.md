@@ -6,6 +6,13 @@
 
 ## ER-диаграмма
 
+![ER-диаграмма](images/er-diagram.png)
+
+Исходник диаграммы (Mermaid) — ниже; картинка сгенерирована из него командой `mmdc`.
+
+<details>
+<summary>Mermaid-код диаграммы</summary>
+
 ```mermaid
 erDiagram
     users ||--o{ telegram_link_codes : "получает"
@@ -154,6 +161,8 @@ erDiagram
     }
 ```
 
+</details>
+
 Перечисления (`cefr` = A1..C2, `exercise_type`, `source`, `msg_role`, `plan_item_type`) — типы `ENUM` PostgreSQL.
 
 ## Таблицы по модулям
@@ -165,6 +174,25 @@ erDiagram
 | vocabulary | `words`, `topic_words`, `user_words`, `word_reviews` | Общий словарь, личный словарь, интервальное повторение |
 | dialogs | `dialogs`, `dialog_messages` | Беседы с Virtual Native Speaker |
 | recommendations | `lesson_plans`, `lesson_plan_items` | Персональные планы занятий от адаптивного наставника |
+
+## Ограничения целостности
+
+Кроме первичных и внешних ключей, правила данных проверяет сама СУБД:
+
+| Таблица | Ограничение | Смысл |
+|---|---|---|
+| `mistakes` | `CHECK (num_nonnulls(attempt_id, dialog_message_id) = 1)` | Ошибка относится ровно к одному источнику |
+| `lesson_plan_items` | `CHECK target_matches_type` | Пункт типа `topic` ссылается на тему, `exercise` — на упражнение, остальные — ни на что |
+| `word_reviews` | `CHECK (quality BETWEEN 0 AND 5)` | Шкала оценки SM-2 |
+| `user_words` | `CHECK (ease_factor >= 1.3)`, неотрицательные интервалы | Корректное состояние SM-2 |
+| `dialogs` | `CHECK (ended_at IS NULL OR ended_at >= started_at)` | Диалог не заканчивается раньше начала |
+| `words` | `UNIQUE (text, part_of_speech, translation)` | Нет дублей одного значения слова |
+| `lesson_plan_items` | `UNIQUE (plan_id, position)` | Порядок пунктов плана однозначен |
+| все enum-поля | `ENUM` PostgreSQL | Например, `source` принимает только `web` / `bot` |
+
+Удаление пользователя каскадно удаляет все его данные (`ON DELETE CASCADE`); удалить тему или упражнение, на которые есть ответы, нельзя (`RESTRICT`) — история обучения не теряется.
+
+Реализация: модели SQLAlchemy в `backend/app/modules/*/models.py`, миграция — `backend/migrations/versions/`.
 
 ## Ключевые проектные решения
 
