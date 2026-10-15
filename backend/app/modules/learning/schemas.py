@@ -20,6 +20,7 @@ class ExerciseRead(BaseModel):
     prompt: str
     options: list[str] | None = None  # multiple_choice
     words: list[str] | None = None  # word_order: перемешанные слова
+    solved: bool = False  # пользователь хотя бы раз ответил верно
 
 
 class TopicDetail(BaseModel):

@@ -14,8 +14,8 @@ async def list_topics(user: CurrentUser, session: SessionDep) -> list[TopicSumma
 
 
 @router.get("/topics/{topic_id}")
-async def get_topic(topic_id: int, _: CurrentUser, session: SessionDep) -> TopicDetail:
-    topic = await service.get_topic(session, topic_id)
+async def get_topic(topic_id: int, user: CurrentUser, session: SessionDep) -> TopicDetail:
+    topic = await service.get_topic(session, topic_id, user.id)
     if topic is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Topic not found")
     return topic

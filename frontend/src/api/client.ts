@@ -31,6 +31,7 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
     throw new ApiError(0, 'Нет связи с сервером. Проверьте, что backend запущен.')
   }
   if (!response.ok) throw await toApiError(response)
+  if (response.status === 204) return null as T
   return (await response.json()) as T
 }
 
