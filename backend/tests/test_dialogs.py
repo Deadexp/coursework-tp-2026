@@ -47,6 +47,7 @@ async def test_start_dialog_with_opening_line(
         ("assistant", "Hi! I'm Emma. Nice to meet you!")
     ]
     call = fake_llm.calls[0]
+    assert call["schema"] is SpeakerTurn and call["fast"] is True
     assert "barista" in call["system"] and "level is A1" in call["system"]
     assert "present_simple: Present Simple" in call["system"]
     assert call["messages"][0].content == OPENING_TRIGGER
@@ -97,6 +98,7 @@ async def test_message_saves_reply_and_typed_mistakes(
     # Модели отправлена вся история: открывающий триггер, реплика Emma, реплика ученика.
     sent = fake_llm.calls[-1]["messages"]
     assert [m.role for m in sent] == ["user", "assistant", "user"]
+    assert fake_llm.calls[-1]["fast"] is True  # живой диалог — быстрый режим
 
     full = (await client.get(f"/dialogs/{dialog['id']}", headers=auth_headers)).json()
     assert [m["role"] for m in full["messages"]] == ["assistant", "user", "assistant"]
@@ -152,6 +154,7 @@ async def test_finish_saves_feedback_once(
     assert "• Артикли" in finished["summary"]
     assert again.status_code == 200
     assert sum(c["schema"] is DialogFeedback for c in fake_llm.calls) == 1
+    assert next(c for c in fake_llm.calls if c["schema"] is DialogFeedback)["fast"] is False
     transcript = next(c for c in fake_llm.calls if c["schema"] is DialogFeedback)["messages"][0]
     assert "Learner: A coffee, please" in transcript.content
 

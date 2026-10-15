@@ -109,3 +109,17 @@ def test_workspace_header_is_sent_only_when_configured() -> None:
 
     assert "anthropic-workspace-id" not in plain._client.default_headers
     assert scoped._client.default_headers["anthropic-workspace-id"] == "wrkspc_1"
+
+
+async def test_fast_mode_disables_thinking_only_on_sonnet_5_5() -> None:
+    llm, fake = llm_with(response(content=[SimpleNamespace(type="text", text="ok")]))
+    await llm.chat("sys", [Message("user", "Hi")], fast=True)
+    assert fake.request["thinking"] == {"type": "between_tools"}
+
+    await llm.chat("sys", [Message("user", "Hi")])
+    assert "thinking" not in fake.request
+
+    other, other_fake = llm_with(response(content=[SimpleNamespace(type="text", text="ok")]))
+    other._model = "claude-opus-5-5"
+    await other.chat("sys", [Message("user", "Hi")], fast=True)
+    assert "thinking" not in other_fake.request

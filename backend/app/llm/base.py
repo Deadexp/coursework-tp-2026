@@ -21,10 +21,15 @@ class LLMRefusalError(LLMError):
 
 
 class LLMClient(Protocol):
-    async def chat(self, system: str, messages: list[Message]) -> str:
-        """Свободный текстовый ответ (например, реплика собеседника)."""
+    async def chat(self, system: str, messages: list[Message], fast: bool = False) -> str:
+        """Свободный текстовый ответ (например, реплика собеседника).
+
+        fast=True — без размышлений модели: быстрее, для живого диалога.
+        """
         ...
 
-    async def parse(self, system: str, messages: list[Message], schema: type[T]) -> T:
+    async def parse(
+        self, system: str, messages: list[Message], schema: type[T], fast: bool = False
+    ) -> T:
         """Ответ строго по Pydantic-схеме (разбор ошибок, план занятия)."""
         ...

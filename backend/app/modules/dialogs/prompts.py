@@ -3,8 +3,8 @@
 from app.modules.dialogs.scenarios import Scenario
 
 LEVEL_STYLE = {
-    "A1": "very simple words and short sentences in Present Simple; one idea per sentence",
-    "A2": "simple everyday words, short sentences, Present and Past Simple",
+    "A1": "very simple, common words and short sentences with one idea each",
+    "A2": "simple everyday words and short sentences",
     "B1": "everyday vocabulary and common phrasal verbs, sentences of medium length",
     "B2": "natural everyday English with some idioms",
     "C1": "natural, idiomatic native speech",
@@ -23,6 +23,8 @@ Scenario: {scenario.prompt}
 
 How to reply:
 - Write in English only, 1-3 short sentences, using {LEVEL_STYLE.get(level, LEVEL_STYLE["B1"])}.
+- Keep your English natural and grammatically correct: simplify words and sentence length, \
+never grammar. The learner copies how you speak.
 - Stay in your role and keep the conversation going: usually end with a question.
 - If the learner writes in Russian or asks what something means, explain briefly in simple \
 English and continue the scenario.
@@ -42,4 +44,5 @@ def feedback_system(level: str) -> str:
     return f"""You review a short English practice conversation between a Russian-speaking \
 learner (CEFR level {level}) and a tutor named Emma. Write friendly, specific feedback for the \
 learner in Russian, addressing them as «вы». Base it on the learner's messages and the listed \
-mistakes; mention concrete phrases. Do not invent mistakes that are not there."""
+mistakes; mention concrete phrases. Do not invent mistakes that are not there.
+In strengths_ru, quote only phrases that contain no mistakes; mistakes belong in to_improve_ru."""

@@ -91,14 +91,14 @@ class FakeLLM:
         self.error: Exception | None = None
         self.calls: list[dict] = []
 
-    async def chat(self, system, messages):
-        self.calls.append({"system": system, "messages": messages, "schema": None})
+    async def chat(self, system, messages, fast=False):
+        self.calls.append({"system": system, "messages": messages, "schema": None, "fast": fast})
         if self.error:
             raise self.error
         return self.chat_reply
 
-    async def parse(self, system, messages, schema):
-        self.calls.append({"system": system, "messages": messages, "schema": schema})
+    async def parse(self, system, messages, schema, fast=False):
+        self.calls.append({"system": system, "messages": messages, "schema": schema, "fast": fast})
         if self.error:
             raise self.error
         reply = self.parse_replies[schema]
@@ -108,7 +108,10 @@ class FakeLLM:
 @pytest.fixture
 def fake_llm(client: AsyncClient) -> FakeLLM:
     from app.llm import get_llm
+    from app.modules.dialogs.schemas import SpeakerTurn
 
     fake = FakeLLM()
+    # Приветствие собеседника по умолчанию; тесты переопределяют ответ на реплики.
+    fake.parse_replies[SpeakerTurn] = SpeakerTurn(corrections=[], reply=fake.chat_reply)
     app.dependency_overrides[get_llm] = lambda: fake
     return fake

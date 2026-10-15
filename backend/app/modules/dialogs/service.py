@@ -48,7 +48,12 @@ async def create_dialog(
     system = prompts.speaker_system(scenario, user.cefr_level, _codes(error_types))
 
     # Сначала модель, потом запись: если ИИ недоступен, пустой диалог в БД не останется.
-    opening = await llm.chat(system, [Message("user", prompts.OPENING_TRIGGER)])
+    # Приветствие тоже по схеме: в обычном текстовом режиме модель иногда отвечала сырым JSON,
+    # перенося формат из инструкции про исправления.
+    turn = await llm.parse(
+        system, [Message("user", prompts.OPENING_TRIGGER)], SpeakerTurn, fast=True
+    )
+    opening = turn.reply
 
     dialog = Dialog(user_id=user.id, scenario=scenario.code)
     session.add(dialog)
@@ -119,7 +124,7 @@ async def send_message(
     conversation += [Message(m.role.value, m.content) for m in history]
     conversation.append(Message("user", content))
 
-    turn = await llm.parse(system, conversation, SpeakerTurn)
+    turn = await llm.parse(system, conversation, SpeakerTurn, fast=True)
 
     user_message = DialogMessage(dialog_id=dialog.id, role=MessageRole.USER, content=content)
     session.add(user_message)
