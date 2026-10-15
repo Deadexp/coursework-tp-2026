@@ -221,3 +221,11 @@ def _user_word_read(user_word: UserWord, word: Word) -> UserWordRead:
         repetitions=user_word.repetitions,
         ease_factor=user_word.ease_factor,
     )
+
+
+async def count_due(session: AsyncSession, user_id: int) -> int:
+    return await session.scalar(
+        select(func.count())
+        .select_from(UserWord)
+        .where(UserWord.user_id == user_id, UserWord.next_review_at <= func.now())
+    )

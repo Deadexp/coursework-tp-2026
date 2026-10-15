@@ -35,4 +35,5 @@ class LessonPlanItem(Base):
     type: Mapped[PlanItemType] = mapped_column(pg_enum(PlanItemType, "plan_item_type"))
     topic_id: Mapped[int | None] = mapped_column(ForeignKey("topics.id"))
     exercise_id: Mapped[int | None] = mapped_column(ForeignKey("exercises.id"))
+    reason: Mapped[str | None]  # почему наставник предлагает этот шаг
     done_at: Mapped[datetime | None]

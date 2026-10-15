@@ -1,4 +1,7 @@
 from functools import lru_cache
+from typing import Annotated
+
+from fastapi import Depends
 
 from app.core.config import settings
 from app.llm.base import LLMClient, LLMError, LLMRefusalError, Message
@@ -24,4 +27,7 @@ def get_llm() -> LLMClient:
     raise LLMError(f"Неизвестный LLM_PROVIDER: {settings.llm_provider}")
 
 
-__all__ = ["LLMClient", "LLMError", "LLMRefusalError", "Message", "get_llm"]
+# Зависимость для эндпоинтов; в тестах подменяется через app.dependency_overrides[get_llm].
+LLMDep = Annotated[LLMClient, Depends(get_llm)]
+
+__all__ = ["LLMClient", "LLMDep", "LLMError", "LLMRefusalError", "Message", "get_llm"]

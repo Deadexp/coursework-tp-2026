@@ -1,7 +1,10 @@
+from datetime import UTC, datetime, timedelta
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.enums import ExerciseType
+from app.modules.dialogs.models import Dialog, DialogMessage
 from app.modules.learning import checking
 from app.modules.learning.models import Attempt, ErrorType, Exercise, ExerciseAnswer, Mistake, Topic
 from app.modules.learning.schemas import (
@@ -11,6 +14,7 @@ from app.modules.learning.schemas import (
     ExerciseRead,
     TopicDetail,
     TopicSummary,
+    WeakSpot,
 )
 
 
@@ -143,3 +147,54 @@ def _to_read(exercise: Exercise, answers: list[ExerciseAnswer], solved: bool) ->
         first_correct = next(a.text for a in answers if a.is_correct)
         read.words = checking.shuffled_words(first_correct, seed=exercise.id)
     return read
+
+
+async def list_error_types(session: AsyncSession) -> list[ErrorType]:
+    return list(await session.scalars(select(ErrorType).order_by(ErrorType.code)))
+
+
+async def weak_spots(
+    session: AsyncSession, user_id: int, days: int = 14, limit: int = 5
+) -> list[WeakSpot]:
+    """Навыки, в которых ученик чаще всего ошибался — и в упражнениях, и в диалогах."""
+    since = datetime.now(UTC) - timedelta(days=days)
+    owner = func.coalesce(Attempt.user_id, Dialog.user_id)
+    happened_at = func.coalesce(Attempt.created_at, DialogMessage.created_at)
+    base = (
+        select(Mistake)
+        .outerjoin(Attempt, Attempt.id == Mistake.attempt_id)
+        .outerjoin(DialogMessage, DialogMessage.id == Mistake.dialog_message_id)
+        .outerjoin(Dialog, Dialog.id == DialogMessage.dialog_id)
+        .where(owner == user_id, happened_at > since)
+    )
+    counts = (
+        base.with_only_columns(Mistake.error_type_id, func.count().label("n"))
+        .group_by(Mistake.error_type_id)
+        .subquery()
+    )
+    rows = await session.execute(
+        select(ErrorType, Topic.title, counts.c.n)
+        .join(counts, ErrorType.id == counts.c.error_type_id)
+        .outerjoin(Topic, Topic.id == ErrorType.topic_id)
+        .order_by(counts.c.n.desc(), ErrorType.code)
+        .limit(limit)
+    )
+    spots = []
+    for error_type, topic_title, n in rows:
+        examples = await session.execute(
+            base.with_only_columns(Mistake.fragment, Mistake.correction)
+            .where(Mistake.error_type_id == error_type.id)
+            .order_by(happened_at.desc())
+            .limit(3)
+        )
+        spots.append(
+            WeakSpot(
+                code=error_type.code,
+                name=error_type.name,
+                topic_id=error_type.topic_id,
+                topic_title=topic_title,
+                mistakes=n,
+                examples=[f"{fragment} → {correction}" for fragment, correction in examples],
+            )
+        )
+    return spots
