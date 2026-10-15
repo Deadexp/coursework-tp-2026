@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { listTopics, type TopicSummary } from '../api/learning'
 import { listVocabulary, problemWords, type ProblemWord, type UserWord } from '../api/vocabulary'
 import { useAuth } from '../auth/context'
+import { MentorPlan } from '../components/MentorPlan'
 import { ProgressBar } from '../components/ProgressBar'
 import { plural } from '../format'
 import { useApi } from '../hooks/useApi'
@@ -52,6 +53,8 @@ export function HomePage() {
           </Link>
         )}
       </section>
+
+      <MentorPlan />
 
       <section className="panel review-cta">
         <div>

@@ -159,6 +159,7 @@ erDiagram
         plan_item_type type "topic | exercise | word_review | dialog"
         bigint topic_id FK "NULL"
         bigint exercise_id FK "NULL"
+        text reason "почему наставник предлагает шаг"
         timestamptz done_at "NULL, пока не выполнено"
     }
 ```

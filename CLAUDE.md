@@ -45,10 +45,19 @@
 - Алгоритм SM-2 — чистая функция в `app/modules/vocabulary/sm2.py`; состояние хранится в `user_words`, история — в `word_reviews`.
 - Контракт для сайта и бота (порядок запросов, какую оценку `quality` отправлять) — `docs/api-vocabulary.md`. При изменении API обновлять его.
 
+## ИИ (языковая модель)
+- Провайдер настраивается в `.env`: `LLM_PROVIDER=anthropic|stub`, `ANTHROPIC_API_KEY`, `LLM_MODEL` (по умолчанию `claude-sonnet-5-5`), `LLM_EFFORT` (по умолчанию `low`), при необходимости `ANTHROPIC_WORKSPACE_ID`. Проверка подключения: `docker compose run --rm api python -m app.llm.check`.
+- SDK Anthropic импортируется только в `app/llm/anthropic_client.py`. Эндпоинты получают модель зависимостью `llm: LLMDep` и вызывают `llm.chat(...)` или `llm.parse(..., Schema)` — второй возвращает проверенный Pydantic-объект (structured outputs).
+- Модель вызывать **до** записи в БД, чтобы сбой ИИ не оставлял частичных данных. `LLMError` → 503, `LLMRefusalError` → 422 (обработчик в `app/main.py`).
+- Ссылки, которые возвращает модель (id тем, коды ошибок), проверять по БД перед сохранением.
+- Промпты — в `prompts.py` своего модуля (`dialogs`, `recommendations`).
+- `fast=True` (без размышлений модели, только Sonnet 5.5) — для реплик в живом диалоге; отзыв и план — без него, там важнее качество. Изменения промптов проверять живым прогоном: подставная модель в тестах не покажет качество ответов.
+- В pytest модель подменяется фикстурой `fake_llm` (`tests/conftest.py`); в e2e ответы ИИ подменяются через `page.route` — тесты не тратят деньги и не зависят от сети.
+
 ## Фронтенд
 - Все запросы к API — через `request()` из `frontend/src/api/client.ts`: он подставляет токен и превращает ошибки в `ApiError` (с `fieldErrors` из 422). Обёртки по модулям — `src/api/learning.ts`, `src/api/vocabulary.ts`.
 - Загрузка данных на страницах — хук `useApi(load)` из `src/hooks/useApi.ts`; `load` оборачивать в `useCallback`. При 401 он сам выходит из аккаунта.
-- Страницы: `/` курс, `/topics/:id` тема с упражнениями, `/vocabulary` словарь, `/review` повторение. Общая шапка — `components/AppLayout.tsx`.
+- Страницы: `/` курс и план наставника, `/topics/:id` тема с упражнениями, `/vocabulary` словарь, `/review` повторение, `/talk` и `/talk/:id` разговор с собеседником. Общая шапка — `components/AppLayout.tsx`.
 - Текущий пользователь и вход/выход — `useAuth()` из `src/auth/context.ts`. Закрытые страницы — внутри `<RequireAuth />` в `App.tsx`.
 - Интерфейс на русском. Цвета только через CSS-переменные из `src/index.css` (есть тёмная тема).
 - Название продукта — константа `APP_NAME` в `src/config.ts`.

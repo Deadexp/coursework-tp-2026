@@ -80,3 +80,38 @@ async def auth_headers(client: AsyncClient) -> dict[str, str]:
         data={"username": credentials["email"], "password": credentials["password"]},
     )
     return {"Authorization": f"Bearer {response.json()['access_token']}"}
+
+
+class FakeLLM:
+    """Подставная модель: отвечает заготовками и запоминает, что ей отправили."""
+
+    def __init__(self) -> None:
+        self.chat_reply = "Hi! I'm Emma. Nice to meet you!"
+        self.parse_replies: dict[type, object] = {}
+        self.error: Exception | None = None
+        self.calls: list[dict] = []
+
+    async def chat(self, system, messages, fast=False):
+        self.calls.append({"system": system, "messages": messages, "schema": None, "fast": fast})
+        if self.error:
+            raise self.error
+        return self.chat_reply
+
+    async def parse(self, system, messages, schema, fast=False):
+        self.calls.append({"system": system, "messages": messages, "schema": schema, "fast": fast})
+        if self.error:
+            raise self.error
+        reply = self.parse_replies[schema]
+        return reply(messages) if callable(reply) else reply
+
+
+@pytest.fixture
+def fake_llm(client: AsyncClient) -> FakeLLM:
+    from app.llm import get_llm
+    from app.modules.dialogs.schemas import SpeakerTurn
+
+    fake = FakeLLM()
+    # Приветствие собеседника по умолчанию; тесты переопределяют ответ на реплики.
+    fake.parse_replies[SpeakerTurn] = SpeakerTurn(corrections=[], reply=fake.chat_reply)
+    app.dependency_overrides[get_llm] = lambda: fake
+    return fake

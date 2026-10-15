@@ -46,3 +46,12 @@ class AttemptResult(BaseModel):
     correct_answers: list[str]
     explanation: str | None
     error_type: ErrorTypeRead | None = None
+
+
+class WeakSpot(BaseModel):
+    code: str
+    name: str
+    topic_id: int | None
+    topic_title: str | None
+    mistakes: int
+    examples: list[str]
