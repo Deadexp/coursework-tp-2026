@@ -14,8 +14,19 @@ _FALLBACK_BETA = "server-side-fallback-2026-07-01"
 
 
 class AnthropicLLM:
-    def __init__(self, api_key: str, model: str, effort: str, max_tokens: int = 4000) -> None:
-        self._client = anthropic.AsyncAnthropic(api_key=api_key, timeout=60.0, max_retries=2)
+    def __init__(
+        self,
+        api_key: str,
+        model: str,
+        effort: str,
+        max_tokens: int = 4000,
+        workspace_id: str = "",
+    ) -> None:
+        # Ключу, не привязанному к workspace, API велит явно указывать ID пространства.
+        headers = {"anthropic-workspace-id": workspace_id} if workspace_id else None
+        self._client = anthropic.AsyncAnthropic(
+            api_key=api_key, timeout=60.0, max_retries=2, default_headers=headers
+        )
         self._model = model
         self._effort = effort
         self._max_tokens = max_tokens
@@ -55,6 +66,9 @@ class AnthropicLLM:
             raise LLMError(f"Модель {self._model} не найдена — проверьте LLM_MODEL") from None
         except anthropic.RateLimitError:
             raise LLMError("Превышен лимит запросов к модели, попробуйте позже") from None
+        except anthropic.BadRequestError as e:
+            log.error("Anthropic API rejected request: %s, request_id=%s", e.message, e.request_id)
+            raise LLMError(f"Anthropic API отклонил запрос: {e.message}") from None
         except anthropic.APIStatusError as e:
             log.error("Anthropic API error %s, request_id=%s", e.status_code, e.request_id)
             raise LLMError("Языковая модель временно недоступна") from None

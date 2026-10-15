@@ -19,6 +19,7 @@ def get_llm() -> LLMClient:
             api_key=settings.anthropic_api_key,
             model=settings.llm_model,
             effort=settings.llm_effort,
+            workspace_id=settings.anthropic_workspace_id,
         )
     raise LLMError(f"Неизвестный LLM_PROVIDER: {settings.llm_provider}")
 

@@ -101,3 +101,11 @@ async def test_refusal_becomes_llm_refusal_error() -> None:
 
     with pytest.raises(LLMRefusalError):
         await llm.chat("sys", [Message("user", "...")])
+
+
+def test_workspace_header_is_sent_only_when_configured() -> None:
+    plain = AnthropicLLM(api_key="sk-ant-test", model="m", effort="low")
+    scoped = AnthropicLLM(api_key="sk-ant-test", model="m", effort="low", workspace_id="wrkspc_1")
+
+    assert "anthropic-workspace-id" not in plain._client.default_headers
+    assert scoped._client.default_headers["anthropic-workspace-id"] == "wrkspc_1"

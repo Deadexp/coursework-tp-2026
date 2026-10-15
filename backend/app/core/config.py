@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     llm_model: str = "claude-sonnet-5-5"
     llm_effort: str = "low"  # low | medium | high — глубина размышлений модели
     anthropic_api_key: str = ""
+    anthropic_workspace_id: str = ""  # нужен, только если ключ не привязан к workspace
 
     @field_validator("llm_provider", "llm_model", "llm_effort", mode="before")
     @classmethod
