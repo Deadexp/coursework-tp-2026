@@ -47,7 +47,7 @@ async def list_topics(session: AsyncSession, user_id: int) -> list[TopicSummary]
     ]
 
 
-async def get_topic(session: AsyncSession, topic_id: int) -> TopicDetail | None:
+async def get_topic(session: AsyncSession, topic_id: int, user_id: int) -> TopicDetail | None:
     topic = await session.get(Topic, topic_id)
     if topic is None:
         return None
@@ -58,13 +58,21 @@ async def get_topic(session: AsyncSession, topic_id: int) -> TopicDetail | None:
         )
     ).all()
     answers = await _answers_by_exercise(session, [e.id for e in exercises])
+    solved = set(
+        await session.scalars(
+            select(Attempt.exercise_id)
+            .join(Exercise, Exercise.id == Attempt.exercise_id)
+            .where(Exercise.topic_id == topic_id, Attempt.user_id == user_id, Attempt.is_correct)
+            .distinct()
+        )
+    )
 
     return TopicDetail(
         id=topic.id,
         title=topic.title,
         cefr_level=topic.cefr_level,
         theory=topic.theory,
-        exercises=[_to_read(e, answers.get(e.id, [])) for e in exercises],
+        exercises=[_to_read(e, answers.get(e.id, []), e.id in solved) for e in exercises],
     )
 
 
@@ -127,8 +135,8 @@ async def _answers_by_exercise(
     return result
 
 
-def _to_read(exercise: Exercise, answers: list[ExerciseAnswer]) -> ExerciseRead:
-    read = ExerciseRead(id=exercise.id, type=exercise.type, prompt=exercise.prompt)
+def _to_read(exercise: Exercise, answers: list[ExerciseAnswer], solved: bool) -> ExerciseRead:
+    read = ExerciseRead(id=exercise.id, type=exercise.type, prompt=exercise.prompt, solved=solved)
     if exercise.type == ExerciseType.MULTIPLE_CHOICE:
         read.options = [a.text for a in answers]
     elif exercise.type == ExerciseType.WORD_ORDER:

@@ -126,3 +126,14 @@ async def test_solving_same_exercise_twice_counts_once(
 
     topics = (await client.get("/topics", headers=auth_headers)).json()
     assert topics[0]["exercises_solved"] == 1
+
+
+async def test_topic_detail_marks_solved_exercises(
+    client: AsyncClient, auth_headers: dict, course: None
+) -> None:
+    await client.post("/exercises/1/attempts", json={"answer": "a"}, headers=auth_headers)
+    await client.post("/exercises/3/attempts", json={"answer": "doesn't"}, headers=auth_headers)
+
+    topic = (await client.get("/topics/1", headers=auth_headers)).json()
+
+    assert [e["solved"] for e in topic["exercises"]] == [False, False, True]

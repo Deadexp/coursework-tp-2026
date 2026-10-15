@@ -32,7 +32,7 @@
 - Линт/формат Python: `docker compose run --rm api ruff check --fix . && docker compose run --rm api ruff format .`
 - Миграция: `docker compose run --rm api alembic revision --autogenerate -m "<msg>"`, затем `alembic upgrade head`
 - Фронтенд: `cd frontend && npm run dev | npm run build | npm run lint`
-- E2E-тесты сайта (нужна запущенная система): `cd frontend && npm run test:e2e`. Создают пользователей `e2e-*@example.com` в базе разработки.
+- E2E-тесты сайта (нужна запущенная система): `cd frontend && npm run test:e2e`. Идут по настоящему контенту (нужен `python -m app.seed`) и создают пользователей `e2e-*@example.com` в базе разработки.
 - Swagger: http://localhost:8000/docs
 - Загрузить учебный контент из `backend/content/course.json`: `docker compose run --rm api python -m app.seed` (повторный запуск безопасен)
 
@@ -46,7 +46,9 @@
 - Контракт для сайта и бота (порядок запросов, какую оценку `quality` отправлять) — `docs/api-vocabulary.md`. При изменении API обновлять его.
 
 ## Фронтенд
-- Все запросы к API — через `request()` из `frontend/src/api/client.ts`: он подставляет токен и превращает ошибки в `ApiError` (с `fieldErrors` из 422).
+- Все запросы к API — через `request()` из `frontend/src/api/client.ts`: он подставляет токен и превращает ошибки в `ApiError` (с `fieldErrors` из 422). Обёртки по модулям — `src/api/learning.ts`, `src/api/vocabulary.ts`.
+- Загрузка данных на страницах — хук `useApi(load)` из `src/hooks/useApi.ts`; `load` оборачивать в `useCallback`. При 401 он сам выходит из аккаунта.
+- Страницы: `/` курс, `/topics/:id` тема с упражнениями, `/vocabulary` словарь, `/review` повторение. Общая шапка — `components/AppLayout.tsx`.
 - Текущий пользователь и вход/выход — `useAuth()` из `src/auth/context.ts`. Закрытые страницы — внутри `<RequireAuth />` в `App.tsx`.
 - Интерфейс на русском. Цвета только через CSS-переменные из `src/index.css` (есть тёмная тема).
 - Название продукта — константа `APP_NAME` в `src/config.ts`.
