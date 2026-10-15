@@ -6,6 +6,7 @@ const LINKS = [
   { to: '/', label: 'Курс', end: true },
   { to: '/vocabulary', label: 'Словарь', end: false },
   { to: '/review', label: 'Повторение', end: false },
+  { to: '/talk', label: 'Собеседник', end: false },
 ]
 
 export function AppLayout() {

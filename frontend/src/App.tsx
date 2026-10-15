@@ -6,6 +6,8 @@ import { HomePage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { ReviewPage } from './pages/ReviewPage'
+import { TalkListPage } from './pages/TalkListPage'
+import { TalkPage } from './pages/TalkPage'
 import { TopicPage } from './pages/TopicPage'
 import { VocabularyPage } from './pages/VocabularyPage'
 
@@ -24,6 +26,8 @@ export default function App() {
               <Route path="/topics/:topicId" element={<TopicPage />} />
               <Route path="/vocabulary" element={<VocabularyPage />} />
               <Route path="/review" element={<ReviewPage />} />
+              <Route path="/talk" element={<TalkListPage />} />
+              <Route path="/talk/:dialogId" element={<TalkPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
