@@ -10,6 +10,7 @@ import {
 } from '../api/vocabulary'
 import { formatNextReview, plural } from '../format'
 import { useApi } from '../hooks/useApi'
+import { TelegramConnection } from '../components/TelegramConnection'
 
 export function VocabularyPage() {
   const { data: words, error, loading, reload } = useApi(useCallback(() => listVocabulary(), []))
@@ -70,6 +71,12 @@ export function VocabularyPage() {
           Повторить
         </Link>
       </header>
+
+      <TelegramConnection />
+
+      <button className="button-ghost" disabled={loading} onClick={() => void reload()}>
+        Обновить список слов
+      </button>
 
       <div className="vocab-tools">
         <section className="panel stack">

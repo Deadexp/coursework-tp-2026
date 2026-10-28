@@ -32,4 +32,15 @@ __all__ = [
     "UserWord",
     "Word",
     "WordReview",
+    "PracticeAnswer",
+    "PracticeChoice",
+    "PracticeQuestion",
+    "PracticeSession",
 ]
+
+from app.modules.vocabulary.practice_models import (
+    PracticeAnswer,
+    PracticeChoice,
+    PracticeQuestion,
+    PracticeSession,
+)

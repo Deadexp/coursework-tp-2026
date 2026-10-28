@@ -20,5 +20,5 @@ if errorlevel 1 (
 )
 if not exist ".env" copy ".env.example" ".env" >nul
 echo Ready. Add your Telegram token to .env using Notepad.
-echo Then run start-demo.cmd. See DEMO-WINDOWS.md for instructions.
+echo Then run start-demo.cmd or start-connected.cmd. See the matching instructions.
 pause

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.core.enums import Source
 
@@ -32,11 +32,16 @@ class UserWordRead(BaseModel):
 class VocabularyAdd(BaseModel):
     """Либо word_id слова из общего словаря, либо своё слово: text + translation."""
 
-    word_id: int | None = None
+    word_id: int | None = Field(default=None, gt=0)
     text: str | None = Field(default=None, min_length=1, max_length=100)
     translation: str | None = Field(default=None, min_length=1, max_length=200)
-    part_of_speech: str = Field(default="other", max_length=30)
+    part_of_speech: str = Field(default="other", min_length=1, max_length=30)
     example: str | None = Field(default=None, max_length=300)
+
+    @field_validator("text", "translation", "part_of_speech", mode="before")
+    @classmethod
+    def strip_input(cls, value):
+        return value.strip() if isinstance(value, str) else value
 
     @model_validator(mode="after")
     def one_way_to_add(self) -> "VocabularyAdd":
@@ -48,6 +53,13 @@ class VocabularyAdd(BaseModel):
 
 class AddedCount(BaseModel):
     added: int
+
+
+class VocabularyPage(BaseModel):
+    items: list[UserWordRead]
+    total: int
+    page: int
+    page_size: int
 
 
 class ReviewCard(BaseModel):

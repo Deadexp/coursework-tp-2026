@@ -40,3 +40,10 @@ async def authenticate(session: AsyncSession, email: str, password: str) -> User
 
 async def get_user(session: AsyncSession, user_id: int) -> User | None:
     return await session.get(User, user_id)
+
+
+async def set_level(session: AsyncSession, user_id: int, level):
+    user = await session.scalar(select(User).where(User.id == user_id).with_for_update())
+    user.cefr_level = level
+    await session.commit()
+    return user.cefr_level

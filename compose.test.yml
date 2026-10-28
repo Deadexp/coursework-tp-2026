@@ -1,0 +1,30 @@
+name: coursework-shared-vocabulary-tests
+services:
+  test-db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: test_runner
+      POSTGRES_PASSWORD: isolated-test-only
+      POSTGRES_DB: english_integration
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_runner -d english_integration"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  test-api:
+    build: ./backend
+    working_dir: /app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://test_runner:isolated-test-only@test-db:5432/english_integration
+      BOT_SERVICE_TOKEN: isolated-test-service-key-for-tests-only
+      BOT_USERNAME: course_test_bot
+      LLM_PROVIDER: stub
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - ./backend:/app
+      - ./bot:/bot:ro
+    depends_on:
+      test-db: { condition: service_healthy }
+    command: python -B -m pytest -q -p no:cacheprovider

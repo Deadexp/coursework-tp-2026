@@ -3,7 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query, Response, status
 
 from app.core.db import SessionDep
-from app.modules.users.deps import CurrentUser
+from app.core.enums import Source
+from app.modules.users.telegram_auth import VocabularyUser
 from app.modules.vocabulary import service
 from app.modules.vocabulary.schemas import (
     AddedCount,
@@ -13,6 +14,7 @@ from app.modules.vocabulary.schemas import (
     ReviewResult,
     UserWordRead,
     VocabularyAdd,
+    VocabularyPage,
     WordSearchResult,
 )
 
@@ -21,7 +23,7 @@ router = APIRouter(tags=["vocabulary"])
 
 @router.get("/words")
 async def search_words(
-    user: CurrentUser,
+    user: VocabularyUser,
     session: SessionDep,
     q: Annotated[str, Query(min_length=1, max_length=100)],
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
@@ -31,12 +33,22 @@ async def search_words(
 
 
 @router.get("/vocabulary")
-async def list_vocabulary(user: CurrentUser, session: SessionDep) -> list[UserWordRead]:
+async def list_vocabulary(user: VocabularyUser, session: SessionDep) -> list[UserWordRead]:
     return await service.list_vocabulary(session, user.id)
 
 
+@router.get("/vocabulary/page")
+async def vocabulary_page(
+    user: VocabularyUser,
+    session: SessionDep,
+    page: Annotated[int, Query(ge=0, le=100000)] = 0,
+    page_size: Annotated[int, Query(ge=1, le=20)] = 8,
+) -> VocabularyPage:
+    return await service.vocabulary_page(session, user.id, page, page_size)
+
+
 @router.post("/vocabulary", status_code=status.HTTP_201_CREATED)
-async def add_word(data: VocabularyAdd, user: CurrentUser, session: SessionDep) -> UserWordRead:
+async def add_word(data: VocabularyAdd, user: VocabularyUser, session: SessionDep) -> UserWordRead:
     try:
         return await service.add_word(session, user.id, data)
     except service.WordNotFoundError:
@@ -46,7 +58,7 @@ async def add_word(data: VocabularyAdd, user: CurrentUser, session: SessionDep) 
 
 
 @router.post("/vocabulary/topics/{topic_id}")
-async def add_topic_words(topic_id: int, user: CurrentUser, session: SessionDep) -> AddedCount:
+async def add_topic_words(topic_id: int, user: VocabularyUser, session: SessionDep) -> AddedCount:
     """Добавляет в словарь все слова темы."""
     added = await service.add_topic_words(session, user.id, topic_id)
     if added is None:
@@ -55,7 +67,7 @@ async def add_topic_words(topic_id: int, user: CurrentUser, session: SessionDep)
 
 
 @router.delete("/vocabulary/{word_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def remove_word(word_id: int, user: CurrentUser, session: SessionDep) -> Response:
+async def remove_word(word_id: int, user: VocabularyUser, session: SessionDep) -> Response:
     if not await service.remove_word(session, user.id, word_id):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Word not in vocabulary")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -63,7 +75,7 @@ async def remove_word(word_id: int, user: CurrentUser, session: SessionDep) -> R
 
 @router.get("/vocabulary/review")
 async def due_cards(
-    user: CurrentUser,
+    user: VocabularyUser,
     session: SessionDep,
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
 ) -> list[ReviewCard]:
@@ -73,9 +85,11 @@ async def due_cards(
 
 @router.post("/vocabulary/{word_id}/reviews")
 async def record_review(
-    word_id: int, data: ReviewCreate, user: CurrentUser, session: SessionDep
+    word_id: int, data: ReviewCreate, user: VocabularyUser, session: SessionDep
 ) -> ReviewResult:
     """Результат повторения: пересчитывает интервал по SM-2."""
+    if user.is_bot:
+        data = data.model_copy(update={"source": Source.BOT})
     result = await service.record_review(session, user.id, word_id, data)
     if result is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Word not in vocabulary")
@@ -84,7 +98,7 @@ async def record_review(
 
 @router.get("/vocabulary/problem-words")
 async def problem_words(
-    user: CurrentUser,
+    user: VocabularyUser,
     session: SessionDep,
     days: Annotated[int, Query(ge=1, le=365)] = 30,
     limit: Annotated[int, Query(ge=1, le=50)] = 10,

@@ -1,4 +1,6 @@
-from sqlalchemy import CheckConstraint, ForeignKey, Index, Integer, UniqueConstraint
+from uuid import UUID
+
+from sqlalchemy import CheckConstraint, ForeignKey, Index, Integer, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.db import Base, CreatedAt, IntPK
@@ -60,6 +62,7 @@ class Attempt(Base):
     answer: Mapped[str]
     is_correct: Mapped[bool]
     source: Mapped[Source] = mapped_column(pg_enum(Source, "source"))
+    quiz_request_id: Mapped[UUID | None] = mapped_column(Uuid, unique=True)
     created_at: Mapped[CreatedAt]
 
 
