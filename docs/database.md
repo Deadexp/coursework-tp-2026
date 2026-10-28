@@ -8,13 +8,53 @@
 
 ![ER-диаграмма](images/er-diagram.png)
 
-Исходник диаграммы (Mermaid) — ниже; картинка сгенерирована из него командой `mmdc`.
+Картинка отражает базовую схему. Актуальная схема, включая учебные сессии, приведена ниже в Mermaid.
 
 <details>
 <summary>Mermaid-код диаграммы</summary>
 
 ```mermaid
 erDiagram
+
+    users ||--o{ practice_sessions : "учебные сессии"
+    practice_sessions ||--|{ practice_questions : "шаги"
+    practice_questions ||--o{ practice_choices : "варианты"
+    practice_questions ||--o| practice_answers : "ответ"
+    words ||--o{ practice_questions : "личное слово"
+    words ||--o{ practice_choices : "вариант перевода"
+    practice_sessions {
+        bigint id PK
+        bigint user_id FK
+        text mode
+        date practice_date
+        timestamptz created_at
+        timestamptz completed_at
+        timestamptz cancelled_at
+    }
+    practice_questions {
+        bigint session_id PK,FK
+        smallint position PK
+        bigint word_id FK
+        text kind
+        text gap_prompt
+        timestamptz revealed_at
+    }
+    practice_choices {
+        bigint session_id PK,FK
+        smallint position PK,FK
+        smallint choice_index PK
+        bigint word_id FK
+    }
+    practice_answers {
+        bigint session_id PK,FK
+        smallint position PK,FK
+        text answer
+        smallint option_index FK
+        smallint quality
+        bool is_correct
+        timestamptz next_review_at
+        timestamptz created_at
+    }
     users ||--o{ telegram_link_codes : "получает"
     users ||--o{ attempts : "делает"
     users ||--o{ user_words : "имеет в словаре"
@@ -85,6 +125,7 @@ erDiagram
         bigint topic_id FK "NULL: тема, где это объясняется"
     }
     attempts {
+        uuid quiz_request_id UK "NULL для обычных попыток"
         bigint id PK
         bigint user_id FK
         bigint exercise_id FK
@@ -175,6 +216,7 @@ erDiagram
 | users | `users`, `telegram_link_codes` | Аккаунты; привязка Telegram одноразовым кодом (`t.me/<bot>?start=<code>`) |
 | learning | `topics`, `exercises`, `exercise_answers`, `attempts`, `error_types`, `mistakes` | Контент курса, ответы пользователя и разобранные ошибки |
 | vocabulary | `words`, `topic_words`, `user_words`, `word_reviews` | Общий словарь, личный словарь, интервальное повторение |
+| vocabulary (практика) | `practice_sessions`, `practice_questions`, `practice_choices`, `practice_answers` | Сохранённые мини-тесты, практика дня и ответы |
 | dialogs | `dialogs`, `dialog_messages` | Беседы с Virtual Native Speaker |
 | recommendations | `lesson_plans`, `lesson_plan_items` | Персональные планы занятий от адаптивного наставника |
 
@@ -192,6 +234,9 @@ erDiagram
 | `words` | `UNIQUE (text, part_of_speech, translation)` | Нет дублей одного значения слова |
 | `lesson_plan_items` | `UNIQUE (plan_id, position)` | Порядок пунктов плана однозначен |
 | `exercises` | `UNIQUE (topic_id, prompt)` | В теме нет двух одинаковых заданий; это же ключ для повторной загрузки контента |
+| `practice_sessions` | Частичный UNIQUE по пользователю и дате для неотменённого дня; CHECK режима и даты | Один действующий набор заданий в день UTC |
+| `practice_answers` | PK по сессии и позиции; CHECK ровно одного вида ответа | Один ответ на шаг, безопасный повтор запроса |
+| `practice_answers`, `practice_choices` | Составные FK вопроса и варианта | Вариант принадлежит нужному вопросу |
 | все enum-поля | `ENUM` PostgreSQL | Например, `source` принимает только `web` / `bot` |
 
 Удаление пользователя каскадно удаляет все его данные (`ON DELETE CASCADE`); удалить тему или упражнение, на которые есть ответы, нельзя (`RESTRICT`) — история обучения не теряется.
@@ -273,3 +318,55 @@ WHERE uw.user_id = :user_id AND uw.next_review_at <= now()
 ORDER BY uw.next_review_at
 LIMIT 20;
 ```
+
+
+## Учебные сессии подключённого бота
+
+Модели: vocabulary/practice_models.py; добавочная миграция feef7ec67795.
+Данные словаря и существующие таблицы не перестраиваются.
+
+- practice_sessions: владелец, режим, дата UTC и события завершения/отмены.
+  Частичный уникальный индекс запрещает вторую неотменённую дневную сессию пользователя
+  за ту же дату. Режим и наличие даты согласованы CHECK.
+- practice_questions: составной ключ (session_id, position), слово и вид шага.
+- practice_choices: отдельные атомарные варианты, ключ (session_id, position, choice_index).
+  Переводы берутся из words, в вопросах не дублируются.
+- practice_answers: один ответ на шаг. Владелец определяется через сессию;
+  дублирующего user_id нет. CHECK требует ровно одно из answer, option_index, quality.
+  is_correct не заполняется для самооценок карточек.
+- Составные внешние ключи защищают принадлежность вопроса и выбранного варианта.
+  Удаление пользователя каскадно удаляет его сессии; общие слова защищены RESTRICT.
+  Удаление слова только из личного словаря сохраняет результаты прошлых тестов.
+- Правильность ответа — исторический результат проверки, как в attempts.
+  next_review_at в ответе — квитанция о времени, назначенном в момент ответа,
+  а не дубликат текущего состояния SM-2. gap_prompt — снимок использованного примера.
+- Счётчики правильных ответов, повторений и завершённых занятий не хранятся в профиле:
+  они вычисляются запросами. Показатель reviews относится к сохранённой истории повторений.
+- Блокировка сессии и единая транзакция ответа со SM-2 предотвращают повторное
+  начисление результата. Блокировка пользователя и уникальный индекс защищают создание дня.
+
+
+## Идемпотентность грамматического мини-теста
+
+Миграция `43519f5b65f9` добавляет к `attempts` одно nullable-поле UUID
+`quiz_request_id` и уникальное ограничение `uq_attempts_quiz_request_id`.
+Существующие строки сохраняются; NULL допускается многократно для обычных попыток
+сайта. Пользователи, словари, привязки, результаты и таблицы практики не удаляются.
+
+Идентификатор получается на сервере из подписанного номера теста и позиции задания.
+Транзакционная advisory-блокировка PostgreSQL сериализует ответы одного теста;
+уникальность защищает от повторной записи. Повтор того же ответа возвращает результат
+существующей попытки; другой ответ на пройденный шаг отклоняется. Проверка и запись
+используют общий `learning.service.submit_attempt`, включая `mistakes`.
+
+Отдельного банка, копии ответов и таблицы итогов теста нет. Балл и темы ошибок
+вычисляются из `attempts` и связей exercises/topics: требования 3НФ сохраняются.
+Служебный токен API не хранится в учебных таблицах. Подписанный токен теста ограничен
+пользователем и сроком четыре часа, передаётся только телом HTTP-запроса/ответа.
+Он не является токеном входа сайта и подписан отдельным производным ключом.
+
+Upgrade, downgrade до `feef7ec67795`, повторный upgrade и `alembic check` проверены
+на временной PostgreSQL. Downgrade удаляет только новое ограничение и колонку;
+на рабочей базе downgrade не выполнялся. Ручная проверка схемы: внешние ключи
+attempts/mistakes сохранены, новая уникальность относится к одной попытке,
+производные итоговые значения не записываются.

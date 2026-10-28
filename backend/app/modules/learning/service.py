@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from uuid import UUID
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -81,7 +82,12 @@ async def get_topic(session: AsyncSession, topic_id: int, user_id: int) -> Topic
 
 
 async def submit_attempt(
-    session: AsyncSession, user_id: int, exercise_id: int, data: AttemptCreate
+    session: AsyncSession,
+    user_id: int,
+    exercise_id: int,
+    data: AttemptCreate,
+    *,
+    quiz_request_id: UUID | None = None,
 ) -> AttemptResult | None:
     """Проверяет ответ, сохраняет попытку, а при ошибке — запись в mistakes для адаптивности."""
     exercise = await session.get(Exercise, exercise_id)
@@ -98,12 +104,11 @@ async def submit_attempt(
         answer=data.answer,
         is_correct=ok,
         source=data.source,
+        quiz_request_id=quiz_request_id,
     )
     session.add(attempt)
 
-    error_type = None
     if not ok and exercise.error_type_id is not None:
-        error_type = await session.get(ErrorType, exercise.error_type_id)
         await session.flush()  # нужен attempt.id
         session.add(
             Mistake(
@@ -115,14 +120,47 @@ async def submit_attempt(
         )
     await session.commit()
 
+    return await result_for_attempt(session, attempt)
+
+
+async def result_for_attempt(session: AsyncSession, attempt: Attempt) -> AttemptResult:
+    exercise = await session.get(Exercise, attempt.exercise_id)
+    answers = (await _answers_by_exercise(session, [attempt.exercise_id])).get(
+        attempt.exercise_id, []
+    )
+    correct = [a.text for a in answers if a.is_correct]
+    error_type = (
+        await session.get(ErrorType, exercise.error_type_id)
+        if (not attempt.is_correct and exercise.error_type_id is not None)
+        else None
+    )
     return AttemptResult(
-        is_correct=ok,
+        is_correct=attempt.is_correct,
         correct_answers=correct,
         explanation=exercise.explanation,
         error_type=ErrorTypeRead(code=error_type.code, name=error_type.name)
         if error_type
         else None,
     )
+
+
+async def read_exercise(session: AsyncSession, exercise_id: int) -> ExerciseRead | None:
+    exercise = await session.get(Exercise, exercise_id)
+    if exercise is None:
+        return None
+    answers = (await _answers_by_exercise(session, [exercise_id])).get(exercise_id, [])
+    return _to_read(exercise, answers, False)
+
+
+async def attempt_counts(session: AsyncSession, user_id: int) -> tuple[int, int]:
+    total, correct = (
+        await session.execute(
+            select(func.count(), func.count().filter(Attempt.is_correct.is_(True)))
+            .select_from(Attempt)
+            .where(Attempt.user_id == user_id)
+        )
+    ).one()
+    return total, correct
 
 
 async def _answers_by_exercise(

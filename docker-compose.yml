@@ -21,6 +21,7 @@ services:
   bot:
     build: ./bot
     env_file: .env
+    environment: { API_BASE_URL: "http://api:8000" }
     volumes: [./bot:/app]
     depends_on: [api]
 

@@ -1,3 +1,4 @@
+import hashlib
 import random
 from datetime import UTC, datetime, timedelta
 
@@ -16,6 +17,7 @@ from app.modules.vocabulary.schemas import (
     ReviewResult,
     UserWordRead,
     VocabularyAdd,
+    VocabularyPage,
     WordRead,
     WordSearchResult,
 )
@@ -56,6 +58,31 @@ async def list_vocabulary(session: AsyncSession, user_id: int) -> list[UserWordR
         .order_by(UserWord.added_at.desc(), Word.text)
     )
     return [_user_word_read(uw, w) for uw, w in rows]
+
+
+async def vocabulary_page(
+    session: AsyncSession,
+    user_id: int,
+    page: int,
+    page_size: int,
+) -> VocabularyPage:
+    total = await session.scalar(
+        select(func.count()).select_from(UserWord).where(UserWord.user_id == user_id)
+    )
+    rows = await session.execute(
+        select(UserWord, Word)
+        .join(Word, Word.id == UserWord.word_id)
+        .where(UserWord.user_id == user_id)
+        .order_by(UserWord.added_at.desc(), Word.text, Word.id)
+        .offset(page * page_size)
+        .limit(page_size)
+    )
+    return VocabularyPage(
+        items=[_user_word_read(uw, w) for uw, w in rows],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
 
 
 async def add_word(session: AsyncSession, user_id: int, data: VocabularyAdd) -> UserWordRead:
@@ -133,9 +160,13 @@ async def due_cards(session: AsyncSession, user_id: int, limit: int) -> list[Rev
 
 
 async def record_review(
-    session: AsyncSession, user_id: int, word_id: int, data: ReviewCreate
+    session: AsyncSession, user_id: int, word_id: int, data: ReviewCreate, *, commit: bool = True
 ) -> ReviewResult | None:
-    user_word = await session.get(UserWord, (user_id, word_id))
+    user_word = await session.scalar(
+        select(UserWord)
+        .where(UserWord.user_id == user_id, UserWord.word_id == word_id)
+        .with_for_update()
+    )
     if user_word is None:
         return None
 
@@ -157,7 +188,8 @@ async def record_review(
             reviewed_at=now,
         )
     )
-    await session.commit()
+    if commit:
+        await session.commit()
     return ReviewResult(
         next_review_at=user_word.next_review_at,
         interval_days=state.interval_days,
@@ -176,6 +208,7 @@ async def problem_words(
     rows = await session.execute(
         select(Word, failures, last_failed_at)
         .join(WordReview, WordReview.word_id == Word.id)
+        .join(UserWord, (UserWord.word_id == Word.id) & (UserWord.user_id == user_id))
         .where(
             WordReview.user_id == user_id,
             WordReview.reviewed_at > datetime.now(UTC) - timedelta(days=days),
@@ -193,6 +226,11 @@ async def problem_words(
 
 async def _get_or_create_word(session: AsyncSession, data: VocabularyAdd) -> Word:
     text, translation = data.text.strip(), data.translation.strip()
+    # Serialize creation of the same normalized pair across web and bot requests.
+    # The existing UNIQUE constraint is case-sensitive; no schema change is needed.
+    canonical = f"{text.lower()}\0{data.part_of_speech}\0{translation.lower()}"
+    lock_key = int.from_bytes(hashlib.sha256(canonical.encode()).digest()[:8], signed=True)
+    await session.execute(select(func.pg_advisory_xact_lock(lock_key)))
     word = await session.scalar(
         select(Word).where(
             func.lower(Word.text) == text.lower(),
