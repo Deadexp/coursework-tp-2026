@@ -20,17 +20,83 @@
       "name": "Предлоги времени",
       "topic": "Prepositions of time: in / on / at"
     },
-    { "code": "past_simple", "name": "Past Simple", "topic": "Past Simple" },
-    { "code": "word_order", "name": "Порядок слов", "topic": null },
-    { "code": "vocabulary", "name": "Лексика", "topic": null },
-    { "code": "spelling", "name": "Орфография", "topic": null }
+    {
+      "code": "past_simple",
+      "name": "Past Simple",
+      "topic": "Past Simple"
+    },
+    {
+      "code": "word_order",
+      "name": "Порядок слов",
+      "topic": null
+    },
+    {
+      "code": "vocabulary",
+      "name": "Лексика",
+      "topic": null
+    },
+    {
+      "code": "spelling",
+      "name": "Орфография",
+      "topic": null
+    },
+    {
+      "code": "be_pronouns",
+      "name": "Глагол be и местоимения",
+      "topic": "To be and subject pronouns"
+    },
+    {
+      "code": "possessives_have",
+      "name": "Принадлежность и have got",
+      "topic": "Possessives and have got"
+    },
+    {
+      "code": "present_continuous",
+      "name": "Present Continuous",
+      "topic": "Present Continuous"
+    },
+    {
+      "code": "quantifiers",
+      "name": "Исчисляемость и количество",
+      "topic": "Countable nouns: some / any / much / many"
+    },
+    {
+      "code": "comparison",
+      "name": "Сравнительная и превосходная степени",
+      "topic": "Comparatives and superlatives"
+    },
+    {
+      "code": "future_forms",
+      "name": "Будущее: will и going to",
+      "topic": "Future: will / going to"
+    },
+    {
+      "code": "modal_verbs",
+      "name": "Модальные глаголы",
+      "topic": "Modal verbs: can / must / should"
+    },
+    {
+      "code": "present_perfect",
+      "name": "Present Perfect",
+      "topic": "Present Perfect"
+    },
+    {
+      "code": "past_continuous",
+      "name": "Past Continuous",
+      "topic": "Past Continuous"
+    },
+    {
+      "code": "conditionals",
+      "name": "Первое и второе условные предложения",
+      "topic": "First and Second Conditionals"
+    }
   ],
   "topics": [
     {
       "title": "Articles: a / an / the",
       "cefr_level": "A1",
       "position": 1,
-      "theory": "# Артикли a / an / the\n\n**a / an** — неопределённый артикль: «какой-то, один из». Ставится перед исчисляемым существительным в единственном числе, когда предмет упоминается впервые.\n\n- **a** — перед согласным *звуком*: *a cat, a university* (/juː/)\n- **an** — перед гласным *звуком*: *an apple, an hour* (h не читается)\n\n**the** — определённый артикль: «тот самый», уже известный собеседнику предмет или единственный в своём роде.\n\n- *I have a cat. **The** cat is black.*\n- *the sun, the moon*\n\n**Без артикля:** имена, большинство стран и городов, множественное число и неисчисляемые существительные в общем смысле: *I like music. Cats are cute.*",
+      "theory": "# Артикли a / an / the\n\n**a / an** — неопределённый артикль: «какой-то, один из». Ставится перед исчисляемым существительным в единственном числе, когда предмет упоминается впервые.\n\n- **a** — перед согласным *звуком*: *a cat, a university* (/juː/)\n- **an** — перед гласным *звуком*: *an apple, an hour* (h не читается)\n\n**the** — определённый артикль: «тот самый», уже известный собеседнику предмет или единственный в своём роде.\n\n- *I have a cat. **The** cat is black.*\n- *the sun, the moon*\n\n**Без артикля:** имена, большинство стран и городов, множественное число и неисчисляемые существительные в общем смысле: *I like music. Cats are cute.*\n\n## Как выбрать артикль\n\nСначала определите, можно ли посчитать предмет. Перед исчисляемым существительным в единственном числе обычно нужен определитель: *a book, the book, my book*. **A / an** вводят один предмет из многих, ещё не известный собеседнику: *I need a pen*. **The** указывает на конкретный предмет, понятный из ситуации: *Close the door, please*. При повторном упоминании: *I bought a bike. The bike is blue*.\n\nA и an зависят от звука, а не буквы: *a university, a useful book*, но *an hour, an orange*. Во множественном числе a / an не употребляются: *a student → students*. Когда говорим о книгах или воде вообще, используем нулевой артикль: *Books are useful. Water is important*. При уточнении конкретного предмета нужен the: *The water in this bottle is cold*.\n\n## Утверждение, отрицание и вопрос\n\nАртикль относится к существительному и не меняется из-за формы предложения: *She has a bike. She doesn't have a bike. Does she have a bike?* Перед прилагательным артикль стоит перед всей группой: *an interesting book*.\n\n## Типичные ошибки\n\n- Не *an university*, а **a university**: первый звук /j/.\n- Не *a music*, а **music**: в этом значении существительное неисчисляемое.\n- Не *the my bag*, а **my bag**: my уже определяет предмет.\n- Не *She is teacher*, а **She is a teacher**: название профессии в единственном числе требует a / an.\n\n**Проверьте себя:** *I saw a cat. The cat was black*.",
       "words": [
         {
           "text": "apple",
@@ -72,40 +138,64 @@
         {
           "type": "multiple_choice",
           "prompt": "I saw ___ elephant at the zoo.",
-          "options": ["a", "an", "the"],
-          "correct": ["an"],
+          "options": [
+            "a",
+            "an",
+            "the"
+          ],
+          "correct": [
+            "an"
+          ],
           "explanation": "Elephant начинается с гласного звука — нужен an."
         },
         {
           "type": "multiple_choice",
           "prompt": "She is ___ university student.",
-          "options": ["a", "an", "the"],
-          "correct": ["a"],
+          "options": [
+            "a",
+            "an",
+            "the"
+          ],
+          "correct": [
+            "a"
+          ],
           "explanation": "University начинается со звука /juː/ — это согласный звук, поэтому a, несмотря на букву u."
         },
         {
           "type": "fill_gap",
           "prompt": "I have a dog. ___ dog is very friendly.",
-          "correct": ["The"],
+          "correct": [
+            "The"
+          ],
           "explanation": "Собаку уже упомянули — теперь это «та самая» собака: the."
         },
         {
           "type": "fill_gap",
           "prompt": "We waited for ___ hour.",
-          "correct": ["an"],
+          "correct": [
+            "an"
+          ],
           "explanation": "В hour буква h не читается, слово начинается с гласного звука — an."
         },
         {
           "type": "translate",
           "prompt": "Солнце встаёт на востоке.",
-          "correct": ["The sun rises in the east"],
+          "correct": [
+            "The sun rises in the east"
+          ],
           "explanation": "Солнце единственное — the sun; стороны света тоже употребляются с the."
         },
         {
           "type": "multiple_choice",
           "prompt": "I like ___ music.",
-          "options": ["a", "the", "(без артикля)"],
-          "correct": ["(без артикля)"],
+          "options": [
+            "a",
+            "the",
+            "(без артикля)"
+          ],
+          "correct": [
+            "(без артикля)"
+          ],
           "explanation": "Music в общем смысле — неисчисляемое существительное, артикль не нужен."
         }
       ]
@@ -114,7 +204,7 @@
       "title": "Present Simple",
       "cefr_level": "A1",
       "position": 2,
-      "theory": "# Present Simple\n\nПростое настоящее время — для привычек, регулярных действий и фактов: *I drink coffee every morning. Water boils at 100 °C.*\n\n**Утверждение:** глагол в начальной форме, но с **he / she / it** добавляется **-s / -es**:\n\n- *I work → she work**s***\n- *go → go**es**, watch → watch**es**, study → stud**ies***\n\n**Отрицание и вопрос** — с помощью **do / does** (does — для he / she / it), а основной глагол уже без -s:\n\n- *She **doesn't like** tea.* (не ~~doesn't likes~~)\n- ***Does** he **play** football?*\n\nСлова-подсказки: *always, usually, often, sometimes, never, every day*. Наречия частоты стоят перед основным глаголом: *I usually get up at seven.*",
+      "theory": "# Present Simple\n\nПростое настоящее время — для привычек, регулярных действий и фактов: *I drink coffee every morning. Water boils at 100 °C.*\n\n**Утверждение:** глагол в начальной форме, но с **he / she / it** добавляется **-s / -es**:\n\n- *I work → she work**s***\n- *go → go**es**, watch → watch**es**, study → stud**ies***\n\n**Отрицание и вопрос** — с помощью **do / does** (does — для he / she / it), а основной глагол уже без -s:\n\n- *She **doesn't like** tea.* (не ~~doesn't likes~~)\n- ***Does** he **play** football?*\n\nСлова-подсказки: *always, usually, often, sometimes, never, every day*. Наречия частоты стоят перед основным глаголом: *I usually get up at seven.*\n\n## Формы и короткие ответы\n\n- **I / you / we / they + V1:** *They study English*.\n- **He / she / it + V-s:** *He studies English*.\n- **I / you / we / they don't + V1:** *We don't work on Sundays*.\n- **He / she / it doesn't + V1:** *She doesn't drive*.\n- **Do / Does + подлежащее + V1?** *Do you speak English? Does he work here?*\n- Короткие ответы: *Yes, I do. No, I don't. Yes, she does. No, she doesn't*.\n\nПосле согласной + y пишется -ies: *study → studies*. После гласной + y — обычное -s: *play → plays*. Отдельно запомните *have → has*. У be особые формы: *He is tired. Is he tired?* К be вспомогательный do не добавляем.\n\n## Наречия частоты\n\nПеред обычным глаголом: *She often walks to school*. После be: *She is often tired*. Выражения *every morning, on Fridays* обычно стоят в конце: *We play tennis on Fridays*. Never уже выражает отрицание: *I never smoke*, без don't.\n\n## Типичные ошибки\n\n- Не *Does she works?*, а **Does she work?**: окончание уже в does.\n- Не *He don't like it*, а **He doesn't like it**.\n- Не *I am work every day*, а **I work every day**.\n- Для процесса сейчас обычно нужен Present Continuous: **I read every day**, но **I am reading now**.",
       "words": [
         {
           "text": "usually",
@@ -156,33 +246,52 @@
         {
           "type": "fill_gap",
           "prompt": "She ___ (work) in a bank.",
-          "correct": ["works"],
+          "correct": [
+            "works"
+          ],
           "explanation": "She — третье лицо единственного числа, добавляем -s: works."
         },
         {
           "type": "multiple_choice",
           "prompt": "___ your brother live in London?",
-          "options": ["Do", "Does", "Is"],
-          "correct": ["Does"],
+          "options": [
+            "Do",
+            "Does",
+            "Is"
+          ],
+          "correct": [
+            "Does"
+          ],
           "explanation": "Your brother = he, поэтому вопрос строится с does."
         },
         {
           "type": "fill_gap",
           "prompt": "He ___ (not / like) coffee.",
-          "correct": ["doesn't like", "does not like"],
+          "correct": [
+            "doesn't like",
+            "does not like"
+          ],
           "explanation": "Отрицание с he: doesn't + глагол без -s."
         },
         {
           "type": "multiple_choice",
           "prompt": "My cat ___ fish every day.",
-          "options": ["eat", "eats", "eating"],
-          "correct": ["eats"],
+          "options": [
+            "eat",
+            "eats",
+            "eating"
+          ],
+          "correct": [
+            "eats"
+          ],
           "explanation": "My cat = it, поэтому eats."
         },
         {
           "type": "word_order",
           "prompt": "Составьте предложение: во сколько вы обычно встаёте.",
-          "correct": ["I usually get up at seven"],
+          "correct": [
+            "I usually get up at seven"
+          ],
           "explanation": "Наречие частоты usually стоит перед основным глаголом."
         },
         {
@@ -200,7 +309,7 @@
       "title": "There is / There are",
       "cefr_level": "A1",
       "position": 3,
-      "theory": "# There is / There are\n\nКонструкция сообщает, что что-то **где-то есть, находится**. По-русски мы обычно начинаем с места: «На столе книга». По-английски — с there: *There is a book on the table.*\n\n- **There is** + единственное число или неисчисляемое: *There is a cat in the garden. There is some milk in the fridge.*\n- **There are** + множественное число: *There are two cats in the garden.*\n\n**Отрицание:** *There isn't / There aren't*: *There aren't any shops here.*\n\n**Вопрос:** *Is there…? / Are there…?*: *Is there a bank near here?*",
+      "theory": "# There is / There are\n\nКонструкция сообщает, что что-то **где-то есть, находится**. По-русски мы обычно начинаем с места: «На столе книга». По-английски — с there: *There is a book on the table.*\n\n- **There is** + единственное число или неисчисляемое: *There is a cat in the garden. There is some milk in the fridge.*\n- **There are** + множественное число: *There are two cats in the garden.*\n\n**Отрицание:** *There isn't / There aren't*: *There aren't any shops here.*\n\n**Вопрос:** *Is there…? / Are there…?*: *Is there a bank near here?*\n\n## Полная схема\n\n**Утверждение:** *There is a desk in the room. There are two windows*. Сокращение there's подходит к is: *There's a desk*. В учебной письменной речи согласуйте there are с множественным числом.\n\n**Отрицание:** *There isn't a lift. There isn't any water. There aren't any chairs*. Можно также сказать *There is no water*. Не совмещайте no и not в одной группе.\n\n**Вопрос:** *Is there a supermarket? Are there any shops?* Короткие ответы: *Yes, there is. No, there isn't. Yes, there are. No, there aren't*.\n\nДля количества: *How many chairs are there? — There are four chairs*. Для неисчисляемого: *How much water is there?*\n\n## There и it\n\nThere is вводит новый предмет: *There is a cafe near the station*. Когда предмет уже назван, описываем его с it: *It is small*. Это разные задачи: сообщить о наличии предмета и описать известный предмет.\n\n## Типичные ошибки\n\n- Не *There is two chairs*, а **There are two chairs**.\n- Не *There have a park*, а **There is a park**.\n- Не *Is there any shops?*, а **Are there any shops?**\n- Milk, water, bread здесь неисчисляемые: **There is some milk**, даже если молока много.\n\n**Проверьте себя:** «В комнате нет стульев. Есть стол?» — *There aren't any chairs in the room. Is there a table?*",
       "words": [
         {
           "text": "museum",
@@ -242,27 +351,44 @@
         {
           "type": "multiple_choice",
           "prompt": "There ___ three apples on the table.",
-          "options": ["is", "are", "be"],
-          "correct": ["are"],
+          "options": [
+            "is",
+            "are",
+            "be"
+          ],
+          "correct": [
+            "are"
+          ],
           "explanation": "Three apples — множественное число, поэтому there are."
         },
         {
           "type": "multiple_choice",
           "prompt": "There ___ some milk in the fridge.",
-          "options": ["is", "are", "am"],
-          "correct": ["is"],
+          "options": [
+            "is",
+            "are",
+            "am"
+          ],
+          "correct": [
+            "is"
+          ],
           "explanation": "Milk — неисчисляемое существительное, с ним there is."
         },
         {
           "type": "fill_gap",
           "prompt": "___ there a park near your house?",
-          "correct": ["Is"],
+          "correct": [
+            "Is"
+          ],
           "explanation": "В вопросе глагол выходит на первое место; a park — единственное число, поэтому Is there."
         },
         {
           "type": "fill_gap",
           "prompt": "There ___ any chairs in the room. (отрицание)",
-          "correct": ["aren't", "are not"],
+          "correct": [
+            "aren't",
+            "are not"
+          ],
           "explanation": "Chairs — множественное число, отрицание: there aren't."
         },
         {
@@ -279,7 +405,9 @@
         {
           "type": "word_order",
           "prompt": "Составьте предложение о книгах на полке.",
-          "correct": ["There are many books on the shelf"],
+          "correct": [
+            "There are many books on the shelf"
+          ],
           "explanation": "There are + множественное число, место — в конце предложения."
         }
       ]
@@ -288,7 +416,7 @@
       "title": "Prepositions of time: in / on / at",
       "cefr_level": "A2",
       "position": 4,
-      "theory": "# Предлоги времени in / on / at\n\nУдобное правило — «от большего к меньшему»:\n\n- **in** — длинные периоды: месяцы, годы, времена года, века, части дня: *in May, in 2025, in winter, in the morning*\n- **on** — дни и даты: *on Monday, on 8 March, on my birthday*\n- **at** — точное время и устойчивые выражения: *at 7 o'clock, at noon, at night, at the weekend* (брит.)\n\n**Без предлога** — перед *this, next, last, every*: *next week, last year, every Monday.*",
+      "theory": "# Предлоги времени in / on / at\n\nУдобное правило — «от большего к меньшему»:\n\n- **in** — длинные периоды: месяцы, годы, времена года, века, части дня: *in May, in 2025, in winter, in the morning*\n- **on** — дни и даты: *on Monday, on 8 March, on my birthday*\n- **at** — точное время и устойчивые выражения: *at 7 o'clock, at noon, at night, at the weekend* (брит.)\n\n**Без предлога** — перед *this, next, last, every*: *next week, last year, every Monday.*\n\n## Время внутри предложения\n\nПредлог не зависит от утверждения, отрицания или вопроса: *The lesson starts at nine. It doesn't start at ten. Does it start at nine?* Вопрос ко времени — *When...?* или *What time...?*: *What time does the train leave? — At six*.\n\n**In:** *in January, in summer, in 2026, in the afternoon*. **On:** *on Tuesday, on 12 May, on Friday evening*. Если часть дня уточнена днём, используем on: *on Monday morning*. **At:** *at midnight, at lunchtime, at Christmas* (праздничный период). С конкретным днём праздника — *on Christmas Day*.\n\nДля выходных встречаются обе нормы: **at the weekend** в британском варианте и **on the weekend** в американском. Они обе правильны. *At night* обозначает ночное время в общем. *In the night* возможно для события в течение конкретной ночи.\n\n## Типичные ошибки\n\n- Не *in Monday*, а **on Monday**.\n- Не *on seven o'clock*, а **at seven o'clock**.\n- Не *in next month*, а **next month**.\n- Не *at the morning*, а **in the morning**.\n\n**Сравните:** *We meet in May / on Monday / at noon*. От большого периода переходим к дню и точному моменту.",
       "words": [
         {
           "text": "birthday",
@@ -330,40 +458,64 @@
         {
           "type": "multiple_choice",
           "prompt": "My birthday is ___ June.",
-          "options": ["in", "on", "at"],
-          "correct": ["in"],
+          "options": [
+            "in",
+            "on",
+            "at"
+          ],
+          "correct": [
+            "in"
+          ],
           "explanation": "Месяц — длинный период, поэтому in."
         },
         {
           "type": "multiple_choice",
           "prompt": "The meeting starts ___ 9 o'clock.",
-          "options": ["in", "on", "at"],
-          "correct": ["at"],
+          "options": [
+            "in",
+            "on",
+            "at"
+          ],
+          "correct": [
+            "at"
+          ],
           "explanation": "Точное время — at."
         },
         {
           "type": "fill_gap",
           "prompt": "We don't go to school ___ Sunday.",
-          "correct": ["on"],
+          "correct": [
+            "on"
+          ],
           "explanation": "Дни недели — on."
         },
         {
           "type": "fill_gap",
           "prompt": "I like to read ___ the evening.",
-          "correct": ["in"],
+          "correct": [
+            "in"
+          ],
           "explanation": "Части дня (in the morning / afternoon / evening) — in. Но: at night."
         },
         {
           "type": "multiple_choice",
           "prompt": "I'll see you ___ next week.",
-          "options": ["in", "on", "(без предлога)"],
-          "correct": ["(без предлога)"],
+          "options": [
+            "in",
+            "on",
+            "(без предлога)"
+          ],
+          "correct": [
+            "(без предлога)"
+          ],
           "explanation": "Перед next, last, this, every предлог не нужен."
         },
         {
           "type": "translate",
           "prompt": "Я родился в 2005 году.",
-          "correct": ["I was born in 2005"],
+          "correct": [
+            "I was born in 2005"
+          ],
           "explanation": "Год — in; «родиться» по-английски — be born: I was born."
         }
       ]
@@ -372,7 +524,7 @@
       "title": "Past Simple",
       "cefr_level": "A2",
       "position": 5,
-      "theory": "# Past Simple\n\nПростое прошедшее время — для законченных действий в прошлом, часто с указанием времени: *yesterday, last week, in 2020, two days ago.*\n\n**Правильные глаголы** получают окончание **-ed**: *work → worked, play → played, study → studied, stop → stopped.*\n\n**Неправильные глаголы** нужно запомнить: *go → went, see → saw, have → had, buy → bought, eat → ate.*\n\n**Отрицание и вопрос** — с **did**, а основной глагол возвращается в начальную форму:\n\n- *I **didn't go** to work.* (не ~~didn't went~~)\n- ***Did** you **see** the film?*",
+      "theory": "# Past Simple\n\nПростое прошедшее время — для законченных действий в прошлом, часто с указанием времени: *yesterday, last week, in 2020, two days ago.*\n\n**Правильные глаголы** получают окончание **-ed**: *work → worked, play → played, study → studied, stop → stopped.*\n\n**Неправильные глаголы** нужно запомнить: *go → went, see → saw, have → had, buy → bought, eat → ate.*\n\n**Отрицание и вопрос** — с **did**, а основной глагол возвращается в начальную форму:\n\n- *I **didn't go** to work.* (не ~~didn't went~~)\n- ***Did** you **see** the film?*\n\n## Формы\n\n**Утверждение:** подлежащее + **V2 / V-ed** — *She visited her friend. They went home*. Форма одинакова для всех лиц. **Отрицание:** **did not / didn't + V1** — *They didn't go home*. **Вопрос:** **Did + подлежащее + V1?** — *Did they go home?* Короткие ответы: *Yes, they did. No, they didn't*.\n\nПосле конечной e добавляем только d: *live → lived*. После согласной + y: *study → studied*. В коротких глаголах ударная гласная перед одной согласной часто ведёт к удвоению: *stop → stopped*. Окончание -ed произносится /t/, /d/ или /ɪd/, но пишется одинаково.\n\n## Особый глагол be\n\nBe не требует did: **I / he / she / it was**, **you / we / they were**. *She was at home. She wasn't at work. Was she tired?* В ответах: *Yes, she was. No, she wasn't*.\n\nНесколько законченных действий в рассказе тоже ставим в Past Simple: *I opened the door, took my bag and left*.\n\n## Типичные ошибки\n\n- Не *Did you went?*, а **Did you go?**\n- Не *She didn't saw it*, а **She didn't see it**.\n- Не *I have seen him yesterday*, а **I saw him yesterday**: yesterday — завершённый период.\n- Не *We was late*, а **We were late**.\n- Не *Did she was at home?*, а **Was she at home?**",
       "words": [
         {
           "text": "yesterday",
@@ -414,40 +566,985 @@
         {
           "type": "fill_gap",
           "prompt": "Yesterday I ___ (go) to the cinema.",
-          "correct": ["went"],
+          "correct": [
+            "went"
+          ],
           "explanation": "Go — неправильный глагол: go → went."
         },
         {
           "type": "multiple_choice",
           "prompt": "We ___ a great film last night.",
-          "options": ["see", "saw", "seen"],
-          "correct": ["saw"],
+          "options": [
+            "see",
+            "saw",
+            "seen"
+          ],
+          "correct": [
+            "saw"
+          ],
           "explanation": "Seen — третья форма (Past Participle); в Past Simple нужна вторая: saw."
         },
         {
           "type": "fill_gap",
           "prompt": "She ___ (not / buy) any bread.",
-          "correct": ["didn't buy", "did not buy"],
+          "correct": [
+            "didn't buy",
+            "did not buy"
+          ],
           "explanation": "Отрицание в прошедшем: didn't + начальная форма глагола (не didn't bought)."
         },
         {
           "type": "multiple_choice",
           "prompt": "___ you call your mom yesterday?",
-          "options": ["Do", "Did", "Were"],
-          "correct": ["Did"],
+          "options": [
+            "Do",
+            "Did",
+            "Were"
+          ],
+          "correct": [
+            "Did"
+          ],
           "explanation": "Yesterday — прошлое, вопрос с did."
         },
         {
           "type": "translate",
           "prompt": "Мы играли в футбол в субботу.",
-          "correct": ["We played football on Saturday"],
+          "correct": [
+            "We played football on Saturday"
+          ],
           "explanation": "Play — правильный глагол: played; дни недели — с on."
         },
         {
           "type": "word_order",
           "prompt": "Составьте предложение о том, что вы делали вчера вечером.",
-          "correct": ["I watched a film yesterday evening"],
+          "correct": [
+            "I watched a film yesterday evening"
+          ],
           "explanation": "Обычный порядок: подлежащее — сказуемое — дополнение — время."
+        }
+      ]
+    },
+    {
+      "title": "To be and subject pronouns",
+      "cefr_level": "A1",
+      "position": 6,
+      "theory": "# To be and subject pronouns\n\n## Когда нужен be\n\nBe означает «быть, являться, находиться». В русском настоящем времени его часто пропускают: «Я студент». В английском он обязателен: *I am a student*. Он связывает человека или предмет с профессией, состоянием, возрастом или местом: *She is a doctor. We are tired. He is twenty. They are at home*.\n\n## Подлежащее и формы\n\n- **I am** — я; **you are** — ты / вы.\n- **He is** — он; **she is** — она; **it is** — предмет, животное, погода.\n- **We are** — мы; **they are** — они.\n\nИмена заменяются местоимениями: *Anna → she; my brother → he; the book → it; Anna and Mark → they*. Сокращения: *I'm, you're, he's, she's, it's, we're, they're*.\n\n## Отрицания и вопросы\n\nДобавьте **not** после be: *I am not late. She is not here. They are not students*. Сокращения: *I'm not, isn't, aren't*. С I am стандартного сокращения amn't нет.\n\nВ вопросе переставьте be перед подлежащим: *Are you ready? Is she a teacher? Where are they?* Короткий ответ сохраняет be: *Yes, I am. No, I'm not. Yes, she is. No, she isn't*. В утвердительном коротком ответе не сокращаем: **Yes, she is**, не *Yes, she's*.\n\n## Типичные ошибки\n\n- Не *I student*, а **I am a student**.\n- Не *He are tired*, а **He is tired**.\n- Не *Do you are ready?*, а **Are you ready?**: do здесь не нужен.\n- Не *I have twenty years*, а **I am twenty years old**.\n- Различайте **its** («его» о предмете) и **it's** (= it is): *It's a cat. Its name is Leo*.\n\n**Проверка:** «Они не дома. Они в школе?» — *They aren't at home. Are they at school?*",
+      "words": [
+        {
+          "text": "ready",
+          "part_of_speech": "adjective",
+          "translation": "готовый",
+          "transcription": "/ˈred.i/",
+          "example": "Are you ready for the lesson?"
+        },
+        {
+          "text": "tired",
+          "part_of_speech": "adjective",
+          "translation": "уставший",
+          "transcription": "/taɪəd/",
+          "example": "I am tired after work."
+        },
+        {
+          "text": "student",
+          "part_of_speech": "noun",
+          "translation": "студент",
+          "transcription": "/ˈstjuː.dənt/",
+          "example": "She is a student."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "My sister ___ a doctor.",
+          "correct": [
+            "is"
+          ],
+          "explanation": "My sister = she; с she используем is.",
+          "options": [
+            "am",
+            "is",
+            "are"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "I ___ not tired.",
+          "correct": [
+            "am"
+          ],
+          "explanation": "С I форма be — am; отрицание am not."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "___ your parents at home?",
+          "correct": [
+            "Are"
+          ],
+          "explanation": "Your parents = they, поэтому Are в начале вопроса.",
+          "options": [
+            "Is",
+            "Am",
+            "Are"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "Tom and I ___ ready for the lesson.",
+          "correct": [
+            "are"
+          ],
+          "explanation": "Tom and I = we; we are."
+        },
+        {
+          "type": "translate",
+          "prompt": "Она не учитель.",
+          "correct": [
+            "She is not a teacher",
+            "She isn't a teacher",
+            "She's not a teacher"
+          ],
+          "explanation": "She + is not + профессия с a. Сокращения тоже верны."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите вопрос: «Где ваши друзья?»",
+          "correct": [
+            "Where are your friends"
+          ],
+          "explanation": "В специальном вопросе: Where + are + подлежащее."
+        }
+      ]
+    },
+    {
+      "title": "Possessives and have got",
+      "cefr_level": "A1",
+      "position": 7,
+      "theory": "# Possessives and have got\n\n## Чей это предмет?\n\nПеред существительным ставим притяжательное слово: **my** (мой), **your** (твой / ваш), **his** (его), **her** (её), **its** (его / её о предмете или животном), **our** (наш), **their** (их). *This is my bag. Their house is small*. Не добавляйте a / the перед словами этого ряда.\n\nБез существительного используем самостоятельную форму: **mine, yours, his, hers, ours, theirs**. *This bag is mine. Is this pen yours?* Сравните: *my book*, но *the book is mine*. У his форма не меняется.\n\n## Принадлежность с именем\n\n**Имя + 's**: *Anna's bike, my brother's room*. У обычного множественного числа на s добавляем только апостроф: *my parents' house*. У неправильного множественного числа — 's: *the children's room*. Апостроф не обозначает обычное множественное число.\n\n## Have got\n\nДля обладания: **I / you / we / they have got**, **he / she / it has got**. *I have got a bike. She's got a dog*. Отрицание: *I haven't got a car. He hasn't got a sister*. Вопрос: *Have you got a pen? Has she got a brother?* Ответ: *Yes, I have. No, she hasn't*.\n\nЕсть равноценная конструкция с обычным have: *I have a bike. Do you have a bike? I don't have a bike*. Не смешивайте схемы: **Have you got...?** или **Do you have...?**, но не *Do you have got...?*\n\n## Типичные ошибки\n\n- Не *her's*, а **hers**: самостоятельные формы без апострофа.\n- Не *She have got*, а **She has got**.\n- Не *the my phone*, а **my phone**.\n- **It's** = it is; **its** — принадлежность: *The dog wags its tail*.\n\n**Сравните:** *This is Anna's book. This is her book. This book is hers*.",
+      "words": [
+        {
+          "text": "bag",
+          "part_of_speech": "noun",
+          "translation": "сумка",
+          "transcription": "/bæɡ/",
+          "example": "This is my bag."
+        },
+        {
+          "text": "brother",
+          "part_of_speech": "noun",
+          "translation": "брат",
+          "transcription": "/ˈbrʌð.ər/",
+          "example": "My brother has got a bike."
+        },
+        {
+          "text": "family",
+          "part_of_speech": "noun",
+          "translation": "семья",
+          "transcription": "/ˈfæm.əl.i/",
+          "example": "Our family is small."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "This is Anna. ___ bag is blue.",
+          "correct": [
+            "Her"
+          ],
+          "explanation": "Перед существительным bag нужна форма her.",
+          "options": [
+            "She",
+            "Her",
+            "Hers"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "He ___ got two sisters.",
+          "correct": [
+            "has"
+          ],
+          "explanation": "С he употребляем has got."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "This pen belongs to me. It is ___.",
+          "correct": [
+            "mine"
+          ],
+          "explanation": "Без существительного используем самостоятельную форму mine.",
+          "options": [
+            "my",
+            "me",
+            "mine"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "___ you got a bicycle?",
+          "correct": [
+            "Have"
+          ],
+          "explanation": "Вопрос: Have you got...?"
+        },
+        {
+          "type": "translate",
+          "prompt": "У неё нет машины. (Используйте have got.)",
+          "correct": [
+            "She hasn't got a car",
+            "She has not got a car"
+          ],
+          "explanation": "С she — has not got; перед car нужен a."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите предложение: «Это дом моих родителей».",
+          "correct": [
+            "This is my parents' house"
+          ],
+          "explanation": "Parents — множественное число на s: ставим апостроф после s."
+        }
+      ]
+    },
+    {
+      "title": "Present Continuous",
+      "cefr_level": "A2",
+      "position": 8,
+      "theory": "# Present Continuous\n\n## Действие сейчас и временная ситуация\n\nPresent Continuous показывает процесс в момент речи: *I am reading now*. Также подходит для временной ситуации: *She is staying with a friend this week*. Подсказки: *now, at the moment, today, this week*. Выбор времени зависит от смысла, а не только от этих слов.\n\n## Формы\n\n**Утверждение:** подлежащее + **am / is / are + V-ing**. *I am working. He is cooking. They are playing*. Сокращения: *I'm working, he's cooking, they're playing*.\n\n**Отрицание:** **am / is / are + not + V-ing**. *I'm not sleeping. She isn't driving. We aren't waiting*.\n\n**Вопрос:** **Am / Is / Are + подлежащее + V-ing?** *Are you listening? What is she doing?* Короткие ответы: *Yes, I am. No, she isn't*. Повторять основной глагол не нужно.\n\n## Как получить -ing\n\nОбычно добавляем -ing: *read → reading*. Конечная немая e исчезает: *make → making, write → writing*. В коротком глаголе с ударной гласной перед одной согласной удваиваем согласную: *sit → sitting, run → running*. Отдельно: *lie → lying*. Конечная y сохраняется: *play → playing*.\n\n## Present Simple или Continuous?\n\n*I work in an office* — постоянная работа; *I am working from home today* — временная ситуация. *He usually walks, but today he is taking the bus*. Глаголы состояния **know, like, want, need, understand** в обычном значении чаще стоят в Present Simple: *I know the answer*.\n\n## Типичные ошибки\n\n- Не *She cooking*, а **She is cooking**: нужна форма be.\n- Не *Does he sleeping?*, а **Is he sleeping?**\n- Не *I am write*, а **I am writing**.\n- Для привычки не *They are play football every day*, а **They play football every day**.",
+      "words": [
+        {
+          "text": "cook",
+          "part_of_speech": "verb",
+          "translation": "готовить еду",
+          "transcription": "/kʊk/",
+          "example": "Dad is cooking dinner."
+        },
+        {
+          "text": "wait",
+          "part_of_speech": "verb",
+          "translation": "ждать",
+          "transcription": "/weɪt/",
+          "example": "We are waiting for the bus."
+        },
+        {
+          "text": "listen",
+          "part_of_speech": "verb",
+          "translation": "слушать",
+          "transcription": "/ˈlɪs.ən/",
+          "example": "Are you listening to me?"
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "Look! The children ___ in the garden.",
+          "correct": [
+            "are playing"
+          ],
+          "explanation": "Действие сейчас; children = they: are playing.",
+          "options": [
+            "play",
+            "are playing",
+            "is playing"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "She is ___ (write) an email now.",
+          "correct": [
+            "writing"
+          ],
+          "explanation": "Write теряет e перед -ing: writing."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "___ you listening to the teacher?",
+          "correct": [
+            "Are"
+          ],
+          "explanation": "Вопрос с you: Are you + V-ing?",
+          "options": [
+            "Do",
+            "Is",
+            "Are"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "They ___ (not / sleep) at the moment.",
+          "correct": [
+            "aren't sleeping",
+            "are not sleeping"
+          ],
+          "explanation": "Для they: are not + sleeping."
+        },
+        {
+          "type": "translate",
+          "prompt": "Я сейчас готовлю ужин.",
+          "correct": [
+            "I am cooking dinner now",
+            "I'm cooking dinner now",
+            "I am cooking dinner at the moment",
+            "I'm cooking dinner at the moment",
+            "Now I am cooking dinner",
+            "Now I'm cooking dinner"
+          ],
+          "explanation": "Процесс сейчас: am cooking. Dinner здесь без артикля."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите вопрос: «Что он сейчас делает?»",
+          "correct": [
+            "What is he doing now"
+          ],
+          "explanation": "What + is + he + doing + now."
+        }
+      ]
+    },
+    {
+      "title": "Countable nouns: some / any / much / many",
+      "cefr_level": "A2",
+      "position": 9,
+      "theory": "# Countable nouns: some / any / much / many\n\n## Что можно посчитать\n\nИсчисляемые существительные имеют единственное и множественное число: *an apple — two apples*. Перед единственным числом нужен определитель: *a cup, my cup*. Неисчисляемые называют вещество или понятие: *water, milk, bread, rice, information, advice*. В обычном значении у них нет формы с -s и артикля a / an.\n\nДля порций используйте единицу: *a glass of water, two slices of bread, a piece of advice*. Сказуемое у неисчисляемого — в единственном числе: *The milk is cold*.\n\n## Some и any\n\n**Some** часто встречается в утверждении: *There are some apples. I have some milk*. **Any** — в отрицании и обычном вопросе: *There aren't any eggs. Do you have any bread?* В предложении или просьбе some естественно и в вопросе: *Would you like some tea? Can I have some water?*\n\nSome и any работают с исчисляемым множественным числом и неисчисляемыми. С одним предметом обычно нужен a / an: *I need an apple*.\n\n## Much, many, a lot of\n\n**Many + исчисляемое множественное:** *many books, How many eggs?* **Much + неисчисляемое:** *much water, How much time?* В разговорном утверждении подходит **a lot of**: *a lot of books, a lot of water*. В отрицании: *not many people, not much time*.\n\n**A few** — немного предметов: *a few apples*. **A little** — немного вещества: *a little milk*. Без a слова few / little подчёркивают нехватку: *We have little time*.\n\n## Типичные ошибки\n\n- Не *many money*, а **much money / a lot of money**.\n- Не *an advice*, а **some advice / a piece of advice**.\n- Не *two breads* для ломтиков, а **two slices of bread**.\n- Не *How much apples?*, а **How many apples?**\n\n**Проверка:** *There is some milk, but there aren't any eggs*.",
+      "words": [
+        {
+          "text": "rice",
+          "part_of_speech": "noun",
+          "translation": "рис",
+          "transcription": "/raɪs/",
+          "example": "We need some rice."
+        },
+        {
+          "text": "advice",
+          "part_of_speech": "noun",
+          "translation": "совет",
+          "transcription": "/ədˈvaɪs/",
+          "example": "Thank you for your advice."
+        },
+        {
+          "text": "slice",
+          "part_of_speech": "noun",
+          "translation": "ломтик",
+          "transcription": "/slaɪs/",
+          "example": "I would like a slice of bread."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "How ___ apples do we need?",
+          "correct": [
+            "many"
+          ],
+          "explanation": "Apples можно посчитать; используем many.",
+          "options": [
+            "much",
+            "many",
+            "any"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "How ___ water is in the bottle?",
+          "correct": [
+            "much"
+          ],
+          "explanation": "Water — неисчисляемое: how much water."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "We have not got ___ eggs.",
+          "correct": [
+            "any"
+          ],
+          "explanation": "В обычном отрицании подходит any.",
+          "options": [
+            "some",
+            "any",
+            "a"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "Would you like ___ tea? (some / any)",
+          "correct": [
+            "some"
+          ],
+          "explanation": "В предложении угощения обычно используем some."
+        },
+        {
+          "type": "translate",
+          "prompt": "В холодильнике есть немного молока.",
+          "correct": [
+            "There is some milk in the fridge",
+            "There's some milk in the fridge",
+            "There is a little milk in the fridge",
+            "There's a little milk in the fridge",
+            "There is some milk in the refrigerator",
+            "There's some milk in the refrigerator"
+          ],
+          "explanation": "Milk неисчисляемое: there is + some / a little milk."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите вопрос: «Сколько у нас времени?»",
+          "correct": [
+            "How much time have we got"
+          ],
+          "explanation": "Time неисчисляемое; how much и have we got."
+        }
+      ]
+    },
+    {
+      "title": "Comparatives and superlatives",
+      "cefr_level": "A2",
+      "position": 10,
+      "theory": "# Comparatives and superlatives\n\n## Сравнение двух предметов\n\nСравнительная степень показывает разницу качества. После неё часто стоит **than**: *My bike is cheaper than your bike*. Односложные прилагательные обычно получают **-er**: *small → smaller, tall → taller*. После e добавляем -r: *nice → nicer*. В коротком слове с одной гласной перед конечной согласной удваиваем согласную: *big → bigger, hot → hotter*.\n\nПосле согласной + y меняем y на i: *happy → happier, easy → easier*. С длинными прилагательными используем **more**: *more expensive, more interesting*. Не добавляем -er одновременно с more.\n\n## Самый в группе\n\nПревосходная степень выделяет один предмет из группы. Обычно нужен **the**: *the smallest room, the biggest city, the easiest question, the most interesting book*. Типичные указания группы: *in my class, in the city, of the three*.\n\nНеправильные формы: **good → better → the best**, **bad → worse → the worst**. *This film is better. It is the best film of the three*.\n\n## Одинаковая и меньшая степень\n\n**As + прилагательное + as** — «такой же»: *My bag is as heavy as yours*. Отрицание: *This room isn't as big as that room*. **Less + прилагательное + than** — «менее»: *This task is less difficult than the last one*.\n\n## Утверждение, отрицание, вопрос\n\nСравнение не меняет схему be: *This train is faster. It isn't cheaper. Is it faster than the bus?* Возможны и другие глаголы: *This coat looks warmer*.\n\n## Типичные ошибки\n\n- Не *more cheaper*, а **cheaper**.\n- Не *the most tall*, а **the tallest**.\n- Не *better then*, а **better than**: then значит «затем».\n- Не *the goodest*, а **the best**.\n\n**Сравните:** *a small room → a smaller room → the smallest room in the house*.",
+      "words": [
+        {
+          "text": "cheap",
+          "part_of_speech": "adjective",
+          "translation": "дешёвый",
+          "transcription": "/tʃiːp/",
+          "example": "This ticket is cheaper."
+        },
+        {
+          "text": "expensive",
+          "part_of_speech": "adjective",
+          "translation": "дорогой",
+          "transcription": "/ɪkˈspen.sɪv/",
+          "example": "That hotel is expensive."
+        },
+        {
+          "text": "heavy",
+          "part_of_speech": "adjective",
+          "translation": "тяжёлый",
+          "transcription": "/ˈhev.i/",
+          "example": "My bag is heavy."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "This bag is ___ than that one.",
+          "correct": [
+            "cheaper"
+          ],
+          "explanation": "Cheap — короткое прилагательное: cheaper без more.",
+          "options": [
+            "cheap",
+            "cheaper",
+            "more cheaper"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "Today is ___ (hot) than yesterday.",
+          "correct": [
+            "hotter"
+          ],
+          "explanation": "Hot → hotter: удваиваем t."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "It is ___ interesting book of the three.",
+          "correct": [
+            "the most"
+          ],
+          "explanation": "Превосходная степень: the most interesting.",
+          "options": [
+            "more",
+            "the most",
+            "most than"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "This is the ___ (good) answer.",
+          "correct": [
+            "best"
+          ],
+          "explanation": "Good имеет неправильную форму best."
+        },
+        {
+          "type": "translate",
+          "prompt": "Моя комната больше твоей.",
+          "correct": [
+            "My room is bigger than yours",
+            "My room is larger than yours",
+            "My room is bigger than your room",
+            "My room is larger than your room"
+          ],
+          "explanation": "Bigger / larger + than; yours заменяет your room."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите предложение: «Этот экзамен легче прошлого».",
+          "correct": [
+            "This exam is easier than the last one"
+          ],
+          "explanation": "Easy → easier; после сравнительной степени — than."
+        }
+      ]
+    },
+    {
+      "title": "Future: will / going to",
+      "cefr_level": "A2",
+      "position": 11,
+      "theory": "# Future: will / going to\n\n## Will: решение, обещание, прогноз\n\n**Will + начальная форма** используется для решения в момент речи: *The phone is ringing. I'll answer it*. Также для обещания или помощи: *I'll help you*, и прогноза-мнения: *I think it will rain tomorrow*.\n\nФорма одинакова для всех лиц: *I / she / they will come*. Отрицание: **will not / won't**. Вопрос: **Will + подлежащее + V1?** *Will you help me?* Ответы: *Yes, I will. No, I won't*. После will не ставим to и не добавляем -s.\n\n## Be going to: намерение и признаки\n\nДля решения, принятого заранее, подходит **am / is / are going to + V1**: *We are going to visit our grandparents on Sunday*. Для прогноза по признакам: *Look at those dark clouds. It's going to rain*.\n\nОтрицание: *She isn't going to drive*. Вопрос: *Are they going to travel? What are you going to do?* В коротком ответе остаётся be: *Yes, they are. No, they aren't*.\n\n## Как выбрать\n\n*I'll buy some milk* — решение только что; *I'm going to buy some milk after work* — план. Контекст важнее слова tomorrow: оно сочетается с обоими вариантами. В реальной речи значения иногда пересекаются, поэтому учитывайте намерение говорящего.\n\nДля конкретной договорённости также возможно Present Continuous: *I'm meeting Anna at six*. Для расписания — Present Simple: *The train leaves at eight*. В упражнениях этой темы выбор между will и going to определяется указанной ситуацией.\n\n## Типичные ошибки\n\n- Не *She will goes*, а **She will go**.\n- Не *I going to study*, а **I am going to study**.\n- Не *Will you to help?*, а **Will you help?**\n- Не *He doesn't will come*, а **He won't come**.\n\n**Проверка:** «Мы уже решили остаться дома» — *We are going to stay at home*.",
+      "words": [
+        {
+          "text": "tomorrow",
+          "part_of_speech": "adverb",
+          "translation": "завтра",
+          "transcription": "/təˈmɒr.əʊ/",
+          "example": "I will call you tomorrow."
+        },
+        {
+          "text": "plan",
+          "part_of_speech": "noun",
+          "translation": "план",
+          "transcription": "/plæn/",
+          "example": "What is your plan for Sunday?"
+        },
+        {
+          "text": "visit",
+          "part_of_speech": "verb",
+          "translation": "посещать",
+          "transcription": "/ˈvɪz.ɪt/",
+          "example": "We are going to visit our friends."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "«The phone is ringing!» — «I ___ answer it.» (решение сейчас)",
+          "correct": [
+            "will"
+          ],
+          "explanation": "Спонтанное решение выражаем через will.",
+          "options": [
+            "will",
+            "am",
+            "going to"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "We ___ going to visit London next month.",
+          "correct": [
+            "are"
+          ],
+          "explanation": "С we используем are going to."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "Look at the dark clouds. It ___ rain.",
+          "correct": [
+            "is going to"
+          ],
+          "explanation": "Прогноз по видимым признакам: is going to rain.",
+          "options": [
+            "is going to",
+            "going to",
+            "will to"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "I ___ (will / not) forget your birthday.",
+          "correct": [
+            "won't",
+            "will not"
+          ],
+          "explanation": "Отрицательная форма: will not или won't."
+        },
+        {
+          "type": "translate",
+          "prompt": "Я помогу тебе завтра. (Используйте will.)",
+          "correct": [
+            "I will help you tomorrow",
+            "I'll help you tomorrow",
+            "Tomorrow I will help you",
+            "Tomorrow I'll help you"
+          ],
+          "explanation": "Will + help без to; tomorrow можно поставить в начало или конец."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите вопрос о планах на выходные.",
+          "correct": [
+            "What are you going to do this weekend"
+          ],
+          "explanation": "What + are + you + going to + do; перед this weekend предлог не нужен."
+        }
+      ]
+    },
+    {
+      "title": "Modal verbs: can / must / should",
+      "cefr_level": "A2",
+      "position": 12,
+      "theory": "# Modal verbs: can / must / should\n\n## Одна схема для разных смыслов\n\nПосле модального глагола ставится **начальная форма без to**. Модальные глаголы не получают -s с he / she / it: *She can swim. He must leave. It should work*. В отрицании добавляем not; в вопросе ставим модальный глагол перед подлежащим. Do / does не нужны.\n\n## Can: умение, возможность, просьба\n\n*I can swim* — умею; *We can meet at six* — можем. Отрицание: **cannot / can't**. Вопрос: *Can you help me?* Ответ: *Yes, I can. No, I can't*. Для вежливой просьбы часто используют could: *Could you open the window, please?*\n\n## Must и have to: необходимость\n\n**Must** выражает необходимость или правило: *You must wear a seat belt*. **Have to** часто подчёркивает внешнее обстоятельство: *I have to start work at eight*. Have to меняется как обычный глагол: *She has to work. Does she have to work?*\n\nРазличайте отрицания: **mustn't** — запрещено: *You mustn't park here*. **Don't / doesn't have to** — нет необходимости: *You don't have to come early* («можно, но необязательно»).\n\n## Should: совет\n\n**Should + V1** — рекомендация: *You should take a break*. Отрицание: **shouldn't** — *You shouldn't stay up late*. Вопрос: *Should I call her?* Ответ: *Yes, you should / No, you shouldn't*.\n\n## Типичные ошибки\n\n- Не *She cans drive*, а **She can drive**.\n- Не *You must to go*, а **You must go**.\n- Не *Do you can swim?*, а **Can you swim?**\n- «Необязательно» — **don't have to**, а не mustn't.\n\n**Сравните:** *You must study* — обязан; *You should study* — совет; *You can study here* — возможность.",
+      "words": [
+        {
+          "text": "swim",
+          "part_of_speech": "verb",
+          "translation": "плавать",
+          "transcription": "/swɪm/",
+          "example": "Can you swim?"
+        },
+        {
+          "text": "rule",
+          "part_of_speech": "noun",
+          "translation": "правило",
+          "transcription": "/ruːl/",
+          "example": "We must follow this rule."
+        },
+        {
+          "text": "break",
+          "part_of_speech": "noun",
+          "translation": "перерыв",
+          "transcription": "/breɪk/",
+          "example": "You should take a break."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "She ___ play the piano very well.",
+          "correct": [
+            "can"
+          ],
+          "explanation": "Can не получает -s и не требует to.",
+          "options": [
+            "cans",
+            "can",
+            "can to"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "You ___ (must / not) use your phone during the exam.",
+          "correct": [
+            "mustn't",
+            "must not"
+          ],
+          "explanation": "Mustn't выражает запрет."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "The meeting is optional. You ___ attend.",
+          "correct": [
+            "do not have to"
+          ],
+          "explanation": "Do not have to означает отсутствие необходимости.",
+          "options": [
+            "must not",
+            "do not have to",
+            "cannot"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "You look tired. You ___ take a break. (should / must not)",
+          "correct": [
+            "should"
+          ],
+          "explanation": "Should даёт совет отдохнуть."
+        },
+        {
+          "type": "translate",
+          "prompt": "Ты умеешь плавать?",
+          "correct": [
+            "Can you swim"
+          ],
+          "explanation": "Вопрос об умении: Can + you + swim?"
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите совет: «Тебе следует пить больше воды».",
+          "correct": [
+            "You should drink more water"
+          ],
+          "explanation": "После should ставим drink без to."
+        }
+      ]
+    },
+    {
+      "title": "Present Perfect",
+      "cefr_level": "B1",
+      "position": 13,
+      "theory": "# Present Perfect\n\n## Связь прошлого с настоящим\n\nPresent Perfect связывает действие с настоящим: результат важен сейчас (*I have lost my keys* — ключей сейчас нет), жизненный опыт (*She has visited Italy*) или продолжающийся период (*We have lived here for two years* — всё ещё живём).\n\n## Формы\n\n**I / you / we / they have + V3**, **he / she / it has + V3**. V3 — третья форма: *worked, seen, gone, written, done*. У правильных глаголов V2 и V3 совпадают; у неправильных могут различаться: *go — went — gone; see — saw — seen*.\n\nОтрицание: **haven't / hasn't + V3** — *He hasn't finished*. Вопрос: **Have / Has + подлежащее + V3?** — *Have you finished?* Короткие ответы: *Yes, I have. No, she hasn't*.\n\n## Полезные слова\n\n**Ever** часто стоит в вопросе об опыте: *Have you ever flown?* **Never** уже выражает отрицание: *I have never flown*. **Already** — уже: *She has already left*. **Yet** — ещё / уже в конце вопроса или отрицания: *Have you finished yet? I haven't finished yet*. **Just** — только что: *He has just arrived*.\n\n**For + длительность:** *for two hours, for three years*. **Since + начало:** *since Monday, since 2020*. *I have known her for ten years* — знаю её до сих пор.\n\n## Present Perfect или Past Simple?\n\nС завершённым моментом прошлого выбираем Past Simple: *I saw him yesterday*. Для опыта без такого времени: *I have seen that film*. *She has been to London* — побывала и вернулась; *She has gone to London* — уехала и ещё не вернулась.\n\n## Типичные ошибки\n\n- Не *He have finished*, а **He has finished**.\n- Не *I have went*, а **I have gone**.\n- Не *I haven't never tried it*, а **I have never tried it**.\n- Не *since three years*, а **for three years**.\n\n**Сравните:** *I bought this laptop last year. I have had it for a year*.",
+      "words": [
+        {
+          "text": "already",
+          "part_of_speech": "adverb",
+          "translation": "уже",
+          "transcription": "/ɔːlˈred.i/",
+          "example": "I have already finished."
+        },
+        {
+          "text": "yet",
+          "part_of_speech": "adverb",
+          "translation": "ещё; уже (в вопросах)",
+          "transcription": "/jet/",
+          "example": "Have you eaten yet?"
+        },
+        {
+          "text": "experience",
+          "part_of_speech": "noun",
+          "translation": "опыт",
+          "transcription": "/ɪkˈspɪə.ri.əns/",
+          "example": "It was a useful experience."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "She ___ already finished her homework.",
+          "correct": [
+            "has"
+          ],
+          "explanation": "She требует has; затем третья форма finished.",
+          "options": [
+            "have",
+            "has",
+            "is"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "I have never ___ (see) snow.",
+          "correct": [
+            "seen"
+          ],
+          "explanation": "После have нужна третья форма: see — saw — seen."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "We have lived here ___ 2020.",
+          "correct": [
+            "since"
+          ],
+          "explanation": "2020 — начало периода, поэтому since.",
+          "options": [
+            "for",
+            "since",
+            "during"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "He ___ (not / finish) the report yet.",
+          "correct": [
+            "hasn't finished",
+            "has not finished"
+          ],
+          "explanation": "He + has not + finished."
+        },
+        {
+          "type": "translate",
+          "prompt": "Я уже прочитал эту книгу.",
+          "correct": [
+            "I have already read this book",
+            "I've already read this book",
+            "I have read this book already",
+            "I've read this book already"
+          ],
+          "explanation": "Have + V3 read; already возможно после have или в конце."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите вопрос об опыте поездки в Лондон.",
+          "correct": [
+            "Have you ever been to London"
+          ],
+          "explanation": "Have + you + ever + been; been to означает опыт посещения."
+        }
+      ]
+    },
+    {
+      "title": "Past Continuous",
+      "cefr_level": "B1",
+      "position": 14,
+      "theory": "# Past Continuous\n\n## Процесс в прошлом\n\nPast Continuous описывает действие в определённый момент прошлого: *At eight yesterday, I was cooking dinner*. Начало и конец процесса здесь не в центре внимания. Сравните факт *I cooked dinner yesterday* и процесс *I was cooking at eight*.\n\n## Формы\n\n**I / he / she / it was + V-ing**, **you / we / they were + V-ing**. *She was reading. We were waiting*. Правила -ing те же: *make → making, run → running, lie → lying*.\n\nОтрицание: **wasn't / weren't + V-ing**. *He wasn't sleeping. They weren't working*. Вопрос: **Was / Were + подлежащее + V-ing?** *Were you listening? What was she doing?* Короткие ответы: *Yes, I was. No, they weren't*.\n\n## Процесс и событие\n\nФоновое действие ставим в Past Continuous, событие — в Past Simple: *I was reading when the phone rang*. When вводит момент события. Пока шёл один процесс, мог идти другой: *While I was cooking, he was washing the dishes*. While часто вводит фон, но не автоматически определяет время.\n\nПоследовательность завершённых действий — Past Simple: *She entered the room, sat down and opened a book*. Continuous нужен именно для процесса, а не просто для длинного предложения.\n\n## Глаголы состояния\n\nKnow, want, need в обычном значении остаются в Past Simple: *I knew the answer*, не *I was knowing*. Некоторые глаголы меняют смысл: *I was thinking about the problem* — размышлял (процесс).\n\n## Типичные ошибки\n\n- Не *They was playing*, а **They were playing**.\n- Не *I was read*, а **I was reading**.\n- Не *Did you were sleeping?*, а **Were you sleeping?**\n- Не ставьте оба глагола в Continuous автоматически: **I was walking when I saw Anna**.\n\n**Проверка:** «Вчера в семь мы не работали» — *We weren't working at seven yesterday*.",
+      "words": [
+        {
+          "text": "while",
+          "part_of_speech": "conjunction",
+          "translation": "пока; в то время как",
+          "transcription": "/waɪl/",
+          "example": "I listened while she spoke."
+        },
+        {
+          "text": "ring",
+          "part_of_speech": "verb",
+          "translation": "звонить; звенеть",
+          "transcription": "/rɪŋ/",
+          "example": "The phone rang while I was cooking."
+        },
+        {
+          "text": "suddenly",
+          "part_of_speech": "adverb",
+          "translation": "вдруг",
+          "transcription": "/ˈsʌd.ən.li/",
+          "example": "Suddenly the rain stopped."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "At nine last night, they ___ a film.",
+          "correct": [
+            "were watching"
+          ],
+          "explanation": "They требует were; описываем процесс в девять.",
+          "options": [
+            "was watching",
+            "were watching",
+            "watch"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "She was ___ (run) when it started to rain.",
+          "correct": [
+            "running"
+          ],
+          "explanation": "Run → running: удваиваем n."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "I was reading when the phone suddenly ___.",
+          "correct": [
+            "rang"
+          ],
+          "explanation": "Короткое событие на фоне процесса — rang.",
+          "options": [
+            "rang",
+            "rings",
+            "ring"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "We ___ (not / sleep) at midnight.",
+          "correct": [
+            "weren't sleeping",
+            "were not sleeping"
+          ],
+          "explanation": "We + were not + sleeping."
+        },
+        {
+          "type": "translate",
+          "prompt": "Я читал книгу вчера в восемь вечера.",
+          "correct": [
+            "I was reading a book at eight yesterday evening",
+            "I was reading a book at eight o'clock yesterday evening",
+            "At eight yesterday evening I was reading a book",
+            "I was reading a book at 8 yesterday evening",
+            "I was reading a book at 8 pm yesterday"
+          ],
+          "explanation": "Процесс в конкретный момент прошлого: was reading; at + время."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите вопрос о действии в момент звонка.",
+          "correct": [
+            "What were you doing when I called"
+          ],
+          "explanation": "What + were + you + doing; короткий звонок — called."
+        }
+      ]
+    },
+    {
+      "title": "First and Second Conditionals",
+      "cefr_level": "B1",
+      "position": 15,
+      "theory": "# First and Second Conditionals\n\n## Две части условия\n\nУсловное предложение содержит условие с **if** и результат. Если if-часть первая, после неё ставится запятая: *If it rains, we will stay at home*. Если условие второе, запятая обычно не нужна: *We will stay at home if it rains*.\n\n## First Conditional: реальная возможность\n\n**If + Present Simple, will + V1.** Для возможного будущего: *If I finish early, I will call you*. Хотя речь о будущем, после if обычно Present Simple без will. С he / she / it сохраняется -s: *If she comes, we will start*.\n\nОтрицание: *If it doesn't rain, we will go out*. Вопрос меняет порядок в главной части: *What will you do if the train is late?* В главной части возможен приказ: *If you are tired, take a break*.\n\n## Second Conditional: воображаемая ситуация\n\n**If + Past Simple, would + V1.** Для воображаемого или маловероятного настоящего / будущего: *If I had more time, I would travel*. Past Simple здесь выражает дистанцию от реальности, а не обязательно прошлое.\n\nОтрицание: *If I didn't work here, I would live in another city*. Вопрос: *What would you do if you won?* В учебном и формальном варианте be обычно **were** для всех лиц: *If I were you, I would ask*. В разговорной речи встречается was с I / he / she; **If I were you** — стандартное выражение совета.\n\n## Сравните смысл\n\n*If I have time, I'll help* — время реально может появиться. *If I had time, I'd help* — сейчас времени нет или ситуация воображаемая. Общая закономерность — Zero Conditional: *If you heat ice, it melts* (Present Simple в обеих частях).\n\n## Типичные ошибки\n\n- Не *If it will rain*, а **If it rains** в обычном первом условном.\n- Не *If I would have time*, а **If I had time** во втором.\n- Не *would to go*, а **would go**.\n- В этих упражнениях используйте полные стандартные схемы, не смешивая их.",
+      "words": [
+        {
+          "text": "unless",
+          "part_of_speech": "conjunction",
+          "translation": "если не",
+          "transcription": "/ənˈles/",
+          "example": "We will walk unless it rains."
+        },
+        {
+          "text": "win",
+          "part_of_speech": "verb",
+          "translation": "выигрывать",
+          "transcription": "/wɪn/",
+          "example": "What would you do if you won?"
+        },
+        {
+          "text": "possible",
+          "part_of_speech": "adjective",
+          "translation": "возможный",
+          "transcription": "/ˈpɒs.ə.bəl/",
+          "example": "It is possible to finish today."
+        }
+      ],
+      "exercises": [
+        {
+          "type": "multiple_choice",
+          "prompt": "If it rains tomorrow, we ___ at home.",
+          "correct": [
+            "will stay"
+          ],
+          "explanation": "Реальное будущее: if + Present Simple, will + V1.",
+          "options": [
+            "will stay",
+            "would stayed",
+            "stayed"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "If she ___ (study) hard, she will pass the exam.",
+          "correct": [
+            "studies"
+          ],
+          "explanation": "В if-части Present Simple: she studies."
+        },
+        {
+          "type": "multiple_choice",
+          "prompt": "If I had more time, I ___ a new language.",
+          "correct": [
+            "would learn"
+          ],
+          "explanation": "Воображаемое условие: would + V1.",
+          "options": [
+            "will learned",
+            "would learn",
+            "learn"
+          ]
+        },
+        {
+          "type": "fill_gap",
+          "prompt": "If I ___ you, I would ask the teacher. (стандартный совет)",
+          "correct": [
+            "were"
+          ],
+          "explanation": "Устойчивый совет: If I were you."
+        },
+        {
+          "type": "translate",
+          "prompt": "Если я закончу рано, я позвоню тебе.",
+          "correct": [
+            "If I finish early, I will call you",
+            "If I finish early, I'll call you",
+            "I will call you if I finish early",
+            "I'll call you if I finish early"
+          ],
+          "explanation": "Finish без will в if-части; will call в результате."
+        },
+        {
+          "type": "word_order",
+          "prompt": "Соберите предложение: «Если бы я был богат, я бы путешествовал».",
+          "correct": [
+            "If I were rich, I would travel"
+          ],
+          "explanation": "Воображаемое условие: If I were + прилагательное, I would + V1."
         }
       ]
     }

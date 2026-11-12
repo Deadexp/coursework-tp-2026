@@ -6,15 +6,21 @@ from app.llm import LLMError, LLMRefusalError
 from app.modules.dialogs.router import router as dialogs_router
 from app.modules.learning.grammar_router import router as grammar_router
 from app.modules.learning.router import router as learning_router
+from app.modules.placement.router import router as placement_router
 from app.modules.recommendations.router import router as recommendations_router
+from app.modules.reminders.router import router as reminders_router
 from app.modules.users.router import router as users_router
 from app.modules.users.telegram_router import router as telegram_router
+from app.modules.vocabulary.modules_router import router as vocabulary_modules_router
 from app.modules.vocabulary.practice_router import router as practice_router
 from app.modules.vocabulary.router import router as vocabulary_router
 
 app = FastAPI(title="English Learning API")
 app.include_router(users_router)
 app.include_router(telegram_router)
+app.include_router(placement_router)
+app.include_router(reminders_router)
+app.include_router(vocabulary_modules_router)
 app.include_router(learning_router)
 app.include_router(grammar_router)
 app.include_router(vocabulary_router)

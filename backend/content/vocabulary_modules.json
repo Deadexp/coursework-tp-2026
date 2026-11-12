@@ -1,0 +1,346 @@
+{
+  "modules": [
+    {
+      "slug": "food",
+      "title": "Еда",
+      "description": "Назовите продукты для завтрака и покупок.",
+      "cefr_level": "A1",
+      "position": 1,
+      "words": [
+        {
+          "text": "apple",
+          "part_of_speech": "noun",
+          "translation": "яблоко",
+          "transcription": "/ˈæp.əl/",
+          "example": "I eat an apple every day.",
+          "image_url": "/images/vocabulary/apple.svg"
+        },
+        {
+          "text": "banana",
+          "part_of_speech": "noun",
+          "translation": "банан",
+          "transcription": "/bəˈnɑː.nə/",
+          "example": "This banana is yellow.",
+          "image_url": "/images/vocabulary/banana.svg"
+        },
+        {
+          "text": "bread",
+          "part_of_speech": "noun",
+          "translation": "хлеб",
+          "transcription": "/bred/",
+          "example": "We need some bread.",
+          "image_url": "/images/vocabulary/bread.svg"
+        },
+        {
+          "text": "cheese",
+          "part_of_speech": "noun",
+          "translation": "сыр",
+          "transcription": "/tʃiːz/",
+          "example": "There is some cheese in the fridge.",
+          "image_url": "/images/vocabulary/cheese.svg"
+        },
+        {
+          "text": "carrot",
+          "part_of_speech": "noun",
+          "translation": "морковь",
+          "transcription": "/ˈkær.ət/",
+          "example": "I put a carrot in the soup.",
+          "image_url": "/images/vocabulary/carrot.svg"
+        },
+        {
+          "text": "egg",
+          "part_of_speech": "noun",
+          "translation": "яйцо",
+          "transcription": "/eɡ/",
+          "example": "Would you like an egg for breakfast?",
+          "image_url": "/images/vocabulary/egg.svg"
+        }
+      ]
+    },
+    {
+      "slug": "animals",
+      "title": "Животные",
+      "description": "Узнайте домашних животных и знакомых обитателей природы.",
+      "cefr_level": "A1",
+      "position": 2,
+      "words": [
+        {
+          "text": "cat",
+          "part_of_speech": "noun",
+          "translation": "кошка",
+          "transcription": "/kæt/",
+          "example": "The cat is sleeping on the sofa.",
+          "image_url": "/images/vocabulary/cat.svg"
+        },
+        {
+          "text": "dog",
+          "part_of_speech": "noun",
+          "translation": "собака",
+          "transcription": "/dɒɡ/",
+          "example": "My dog likes to run.",
+          "image_url": "/images/vocabulary/dog.svg"
+        },
+        {
+          "text": "rabbit",
+          "part_of_speech": "noun",
+          "translation": "кролик",
+          "transcription": "/ˈræb.ɪt/",
+          "example": "The rabbit has long ears.",
+          "image_url": "/images/vocabulary/rabbit.svg"
+        },
+        {
+          "text": "fish",
+          "part_of_speech": "noun",
+          "translation": "рыба",
+          "transcription": "/fɪʃ/",
+          "example": "There is a fish in the pond.",
+          "image_url": "/images/vocabulary/fish.svg"
+        },
+        {
+          "text": "bird",
+          "part_of_speech": "noun",
+          "translation": "птица",
+          "transcription": "/bɜːd/",
+          "example": "A bird is singing in the tree.",
+          "image_url": "/images/vocabulary/bird.svg"
+        },
+        {
+          "text": "turtle",
+          "part_of_speech": "noun",
+          "translation": "черепаха",
+          "transcription": "/ˈtɜː.təl/",
+          "example": "The turtle is swimming slowly.",
+          "image_url": "/images/vocabulary/turtle.svg"
+        }
+      ]
+    },
+    {
+      "slug": "home",
+      "title": "Дом",
+      "description": "Шесть предметов, чтобы описать свою комнату.",
+      "cefr_level": "A1",
+      "position": 3,
+      "words": [
+        {
+          "text": "bed",
+          "part_of_speech": "noun",
+          "translation": "кровать",
+          "transcription": "/bed/",
+          "example": "My bed is next to the window.",
+          "image_url": "/images/vocabulary/bed.svg"
+        },
+        {
+          "text": "chair",
+          "part_of_speech": "noun",
+          "translation": "стул",
+          "transcription": "/tʃeər/",
+          "example": "This chair is very comfortable.",
+          "image_url": "/images/vocabulary/chair.svg"
+        },
+        {
+          "text": "lamp",
+          "part_of_speech": "noun",
+          "translation": "лампа",
+          "transcription": "/læmp/",
+          "example": "There is a lamp on my desk.",
+          "image_url": "/images/vocabulary/lamp.svg"
+        },
+        {
+          "text": "sofa",
+          "part_of_speech": "noun",
+          "translation": "диван",
+          "transcription": "/ˈsəʊ.fə/",
+          "example": "We sit on the sofa in the evening.",
+          "image_url": "/images/vocabulary/sofa.svg"
+        },
+        {
+          "text": "door",
+          "part_of_speech": "noun",
+          "translation": "дверь",
+          "transcription": "/dɔːr/",
+          "example": "Please close the door.",
+          "image_url": "/images/vocabulary/door.svg"
+        },
+        {
+          "text": "clock",
+          "part_of_speech": "noun",
+          "translation": "часы",
+          "transcription": "/klɒk/",
+          "example": "The clock is on the wall.",
+          "image_url": "/images/vocabulary/clock.svg"
+        }
+      ]
+    },
+    {
+      "slug": "travel",
+      "title": "Путешествия и транспорт",
+      "description": "Подготовьтесь к поездке и назовите нужные вещи.",
+      "cefr_level": "A2",
+      "position": 4,
+      "words": [
+        {
+          "text": "bus",
+          "part_of_speech": "noun",
+          "translation": "автобус",
+          "transcription": "/bʌs/",
+          "example": "I take the bus to the station.",
+          "image_url": "/images/vocabulary/bus.svg"
+        },
+        {
+          "text": "train",
+          "part_of_speech": "noun",
+          "translation": "поезд",
+          "transcription": "/treɪn/",
+          "example": "Our train leaves at nine.",
+          "image_url": "/images/vocabulary/train.svg"
+        },
+        {
+          "text": "bicycle",
+          "part_of_speech": "noun",
+          "translation": "велосипед",
+          "transcription": "/ˈbaɪ.sɪ.kəl/",
+          "example": "She rides her bicycle to work.",
+          "image_url": "/images/vocabulary/bicycle.svg"
+        },
+        {
+          "text": "airplane",
+          "part_of_speech": "noun",
+          "translation": "самолёт",
+          "transcription": "/ˈeə.pleɪn/",
+          "example": "The airplane is ready to leave.",
+          "image_url": "/images/vocabulary/airplane.svg"
+        },
+        {
+          "text": "suitcase",
+          "part_of_speech": "noun",
+          "translation": "чемодан",
+          "transcription": "/ˈsuːt.keɪs/",
+          "example": "My suitcase is heavy.",
+          "image_url": "/images/vocabulary/suitcase.svg"
+        },
+        {
+          "text": "ticket",
+          "part_of_speech": "noun",
+          "translation": "билет",
+          "transcription": "/ˈtɪk.ɪt/",
+          "example": "Can I buy a ticket here?",
+          "image_url": "/images/vocabulary/ticket.svg"
+        }
+      ]
+    },
+    {
+      "slug": "study",
+      "title": "Учёба",
+      "description": "Соберите всё необходимое для занятий.",
+      "cefr_level": "A1",
+      "position": 5,
+      "words": [
+        {
+          "text": "book",
+          "part_of_speech": "noun",
+          "translation": "книга",
+          "transcription": "/bʊk/",
+          "example": "I am reading an interesting book.",
+          "image_url": "/images/vocabulary/book.svg"
+        },
+        {
+          "text": "pencil",
+          "part_of_speech": "noun",
+          "translation": "карандаш",
+          "transcription": "/ˈpen.səl/",
+          "example": "Can I borrow your pencil?",
+          "image_url": "/images/vocabulary/pencil.svg"
+        },
+        {
+          "text": "notebook",
+          "part_of_speech": "noun",
+          "translation": "тетрадь",
+          "transcription": "/ˈnəʊt.bʊk/",
+          "example": "Write the answer in your notebook.",
+          "image_url": "/images/vocabulary/notebook.svg"
+        },
+        {
+          "text": "ruler",
+          "part_of_speech": "noun",
+          "translation": "линейка",
+          "transcription": "/ˈruː.lər/",
+          "example": "Use a ruler to draw a straight line.",
+          "image_url": "/images/vocabulary/ruler.svg"
+        },
+        {
+          "text": "backpack",
+          "part_of_speech": "noun",
+          "translation": "рюкзак",
+          "transcription": "/ˈbæk.pæk/",
+          "example": "My books are in my backpack.",
+          "image_url": "/images/vocabulary/backpack.svg"
+        },
+        {
+          "text": "scissors",
+          "part_of_speech": "noun",
+          "translation": "ножницы",
+          "transcription": "/ˈsɪz.əz/",
+          "example": "These scissors are sharp.",
+          "image_url": "/images/vocabulary/scissors.svg"
+        }
+      ]
+    },
+    {
+      "slug": "weather",
+      "title": "Погода",
+      "description": "Поговорите о погоде и подготовьтесь к прогулке.",
+      "cefr_level": "A2",
+      "position": 6,
+      "words": [
+        {
+          "text": "sun",
+          "part_of_speech": "noun",
+          "translation": "солнце",
+          "transcription": "/sʌn/",
+          "example": "The sun is shining today.",
+          "image_url": "/images/vocabulary/sun.svg"
+        },
+        {
+          "text": "cloud",
+          "part_of_speech": "noun",
+          "translation": "облако",
+          "transcription": "/klaʊd/",
+          "example": "There is a dark cloud in the sky.",
+          "image_url": "/images/vocabulary/cloud.svg"
+        },
+        {
+          "text": "rain",
+          "part_of_speech": "noun",
+          "translation": "дождь",
+          "transcription": "/reɪn/",
+          "example": "The rain will stop soon.",
+          "image_url": "/images/vocabulary/rain.svg"
+        },
+        {
+          "text": "snow",
+          "part_of_speech": "noun",
+          "translation": "снег",
+          "transcription": "/snəʊ/",
+          "example": "There is snow on the ground.",
+          "image_url": "/images/vocabulary/snow.svg"
+        },
+        {
+          "text": "umbrella",
+          "part_of_speech": "noun",
+          "translation": "зонт",
+          "transcription": "/ʌmˈbrel.ə/",
+          "example": "Take an umbrella with you.",
+          "image_url": "/images/vocabulary/umbrella.svg"
+        },
+        {
+          "text": "rainbow",
+          "part_of_speech": "noun",
+          "translation": "радуга",
+          "transcription": "/ˈreɪn.bəʊ/",
+          "example": "We saw a rainbow after the rain.",
+          "image_url": "/images/vocabulary/rainbow.svg"
+        }
+      ]
+    }
+  ]
+}

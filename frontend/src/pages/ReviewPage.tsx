@@ -4,6 +4,7 @@ import { dueCards, recordReview } from '../api/vocabulary'
 import { ProgressBar } from '../components/ProgressBar'
 import { plural } from '../format'
 import { useApi } from '../hooks/useApi'
+import '../vocabulary-modules.css'
 
 // Оценки SM-2 для кнопок — как в docs/api-vocabulary.md.
 const RATINGS = [
@@ -18,6 +19,7 @@ export function ReviewPage() {
   const [chosen, setChosen] = useState<string | null>(null)
   const [correctCount, setCorrectCount] = useState(0)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   if (loading && !cards) return <p className="muted">Готовим карточки…</p>
   if (error || !cards) return <p className="alert">{error}</p>
@@ -71,11 +73,16 @@ export function ReviewPage() {
 
   async function rate(quality: number) {
     setSaving(true)
+    setSaveError('')
     try {
       await recordReview(card.word.id, quality)
       if (quality >= 3) setCorrectCount((n) => n + 1)
       setChosen(null)
       setIndex((i) => i + 1)
+    } catch (err) {
+      setSaveError(
+        err instanceof Error ? err.message : 'Не удалось сохранить повторение. Попробуйте снова.',
+      )
     } finally {
       setSaving(false)
     }
@@ -91,6 +98,15 @@ export function ReviewPage() {
       </div>
 
       <section className="panel flashcard" aria-live="polite">
+        {card.word.image_url && (
+          <img
+            className="review-word-image"
+            src={card.word.image_url}
+            alt=""
+            width="156"
+            height="156"
+          />
+        )}
         <p className="flashcard-word">{card.word.text}</p>
         {card.word.transcription && <p className="muted">{card.word.transcription}</p>}
 
@@ -113,6 +129,11 @@ export function ReviewPage() {
 
         {chosen !== null && (
           <div className="stack">
+            {saveError && (
+              <p className="alert" role="alert">
+                {saveError}
+              </p>
+            )}
             {card.word.example && <p className="example">«{card.word.example}»</p>}
             {isCorrect ? (
               <>

@@ -11,6 +11,7 @@ import {
 import { formatNextReview, plural } from '../format'
 import { useApi } from '../hooks/useApi'
 import { TelegramConnection } from '../components/TelegramConnection'
+import { VocabularyModules } from '../components/VocabularyModules'
 
 export function VocabularyPage() {
   const { data: words, error, loading, reload } = useApi(useCallback(() => listVocabulary(), []))
@@ -73,6 +74,11 @@ export function VocabularyPage() {
       </header>
 
       <TelegramConnection />
+
+      <VocabularyModules
+        vocabularyRevision={words?.map(({ word }) => word.id).join(',') ?? ''}
+        onAdded={() => void reload()}
+      />
 
       <button className="button-ghost" disabled={loading} onClick={() => void reload()}>
         Обновить список слов
@@ -147,7 +153,7 @@ export function VocabularyPage() {
         {error && <p className="alert">{error}</p>}
         {words && words.length === 0 && (
           <p className="panel muted">
-            Пока пусто. Найдите слово выше или откройте любую тему и нажмите «Добавить в словарь».
+            Пока пусто. Выберите тематический набор выше, найдите слово или добавьте своё.
           </p>
         )}
         {words && words.length > 0 && (

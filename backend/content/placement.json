@@ -1,0 +1,156 @@
+{
+  "version": "placement-a1-b1-v1",
+  "pass_mark": 6,
+  "questions": [
+    {
+      "id": "a1-01", "position": 1, "level": "A1", "skill": "grammar",
+      "prompt": "Выберите правильную форму: My sister ___ a nurse.",
+      "options": ["am", "is", "are", "be"], "correct_option_index": 1,
+      "explanation": "My sister можно заменить на she. С she в настоящем времени используется is."
+    },
+    {
+      "id": "a1-02", "position": 2, "level": "A1", "skill": "grammar",
+      "prompt": "Вы впервые говорите об одном апельсине. Выберите неопределённый артикль: I have ___ orange in my bag.",
+      "options": ["a", "the", "an", "без артикля"], "correct_option_index": 2,
+      "explanation": "Orange начинается с гласного звука. Перед исчисляемым существительным в единственном числе нужен неопределённый артикль an."
+    },
+    {
+      "id": "a1-03", "position": 3, "level": "A1", "skill": "grammar",
+      "prompt": "Every morning Tom ___ breakfast at seven.",
+      "options": ["has", "have", "having", "to have"], "correct_option_index": 0,
+      "explanation": "Регулярное действие передаёт Present Simple. С Tom (= he) форма have меняется на has."
+    },
+    {
+      "id": "a1-04", "position": 4, "level": "A1", "skill": "grammar",
+      "prompt": "Выберите правильное отрицание: They ___ from Spain.",
+      "options": ["isn't", "not are", "am not", "aren't"], "correct_option_index": 3,
+      "explanation": "С they используется are. Отрицательная форма are not сокращается до aren't."
+    },
+    {
+      "id": "a1-05", "position": 5, "level": "A1", "skill": "vocabulary",
+      "prompt": "Which things do you wear on your feet when you go outside?",
+      "options": ["Gloves", "Shoes", "A shirt", "A hat"], "correct_option_index": 1,
+      "explanation": "Shoes — обувь. Gloves надевают на руки, a shirt — на тело, a hat — на голову."
+    },
+    {
+      "id": "a1-06", "position": 6, "level": "A1", "skill": "vocabulary",
+      "prompt": "Выберите подходящее по смыслу слово: I'm thirsty. Can I have some ___?",
+      "options": ["bread", "cheese", "water", "rice"], "correct_option_index": 2,
+      "explanation": "Thirsty означает «хочется пить». Из перечисленного питьём является water — вода."
+    },
+    {
+      "id": "a1-07", "position": 7, "level": "A1", "skill": "reading",
+      "passage": "Mia works in a bookshop. She gets up at seven and takes the bus to work at eight. The shop opens at nine. Mia walks home after work.",
+      "prompt": "How does Mia get to work?",
+      "options": ["By bus", "By car", "On foot", "By train"], "correct_option_index": 0,
+      "explanation": "В тексте сказано takes the bus to work. Пешком Миа возвращается домой, а не добирается на работу."
+    },
+    {
+      "id": "a1-08", "position": 8, "level": "A1", "skill": "reading",
+      "passage": "Hi Leo! Our tennis lesson is on Tuesday at four this week, not Monday at five. Please bring a bottle of water. See you there! Anna",
+      "prompt": "When is the tennis lesson this week?",
+      "options": ["Monday at four", "Monday at five", "Tuesday at five", "Tuesday at four"], "correct_option_index": 3,
+      "explanation": "Anna сообщает новое время: on Tuesday at four. Monday at five — отменённое время."
+    },
+    {
+      "id": "a2-01", "position": 9, "level": "A2", "skill": "grammar",
+      "prompt": "Look at those dark clouds. It ___ soon.",
+      "options": ["rains", "was raining", "is going to rain", "rained"], "correct_option_index": 2,
+      "explanation": "Be going to используется для прогноза на основании видимых признаков: тёмных облаков."
+    },
+    {
+      "id": "a2-02", "position": 10, "level": "A2", "skill": "grammar",
+      "prompt": "I ___ my keys yesterday, but I found them under the sofa an hour later.",
+      "options": ["lost", "lose", "have lost", "am losing"], "correct_option_index": 0,
+      "explanation": "Yesterday указывает на завершённое время в прошлом. Past Simple глагола lose — lost."
+    },
+    {
+      "id": "a2-03", "position": 11, "level": "A2", "skill": "grammar",
+      "prompt": "This suitcase is ___ than that one.",
+      "options": ["heavy", "heaviest", "more heavy", "heavier"], "correct_option_index": 3,
+      "explanation": "При сравнении двух предметов используется heavier than. В heavy окончание -y меняется на -ier."
+    },
+    {
+      "id": "a2-04", "position": 12, "level": "A2", "skill": "grammar",
+      "prompt": "There isn't ___ milk left. We need to buy some.",
+      "options": ["many", "much", "a few", "an"], "correct_option_index": 1,
+      "explanation": "Milk — неисчисляемое существительное. В отрицании для количества используется much."
+    },
+    {
+      "id": "a2-05", "position": 13, "level": "A2", "skill": "vocabulary",
+      "prompt": "At a hotel, where do you usually collect your room key when you arrive?",
+      "options": ["At reception", "At a pharmacy", "At a platform", "At a classroom"], "correct_option_index": 0,
+      "explanation": "Reception — стойка регистрации в гостинице. Там оформляют заселение и выдают ключ."
+    },
+    {
+      "id": "a2-06", "position": 14, "level": "A2", "skill": "vocabulary",
+      "prompt": "Could I ___ your umbrella? I'll give it back this evening.",
+      "options": ["lend", "keep", "spend", "borrow"], "correct_option_index": 3,
+      "explanation": "Borrow — взять на время, lend — дать на время. Говорящий просит взять чужой зонт и обещает вернуть его."
+    },
+    {
+      "id": "a2-07", "position": 15, "level": "A2", "skill": "reading",
+      "passage": "City Museum notice: From 3 to 10 June, the main entrance will be closed for repairs. Visitors can still enter through the garden gate. Opening hours and ticket prices will stay the same.",
+      "prompt": "What should visitors do between 3 and 10 June?",
+      "options": ["Come at different opening times", "Use the garden entrance", "Pay a higher ticket price", "Wait until the museum reopens"], "correct_option_index": 1,
+      "explanation": "Музей продолжает работать, но входить нужно through the garden gate. Время работы и цена не меняются."
+    },
+    {
+      "id": "a2-08", "position": 16, "level": "A2", "skill": "reading",
+      "passage": "Sam planned to drive to the coast on Saturday, but his car broke down on Friday. His friend offered him a lift. They left early and reached the beach before it became crowded.",
+      "prompt": "Why did Sam travel in his friend's car?",
+      "options": ["The beach was already crowded", "He wanted to leave on Friday", "His own car was not working", "He had forgotten the way"], "correct_option_index": 2,
+      "explanation": "Sam's car broke down означает, что его машина сломалась. Поэтому он воспользовался предложением друга подвезти его."
+    },
+    {
+      "id": "b1-01", "position": 17, "level": "B1", "skill": "grammar",
+      "prompt": "I ___ in this town since 2021, and I still live here.",
+      "options": ["have lived", "lived", "am living", "live"], "correct_option_index": 0,
+      "explanation": "Действие началось в прошлом и продолжается сейчас. С since 2021 используется Present Perfect: have lived."
+    },
+    {
+      "id": "b1-02", "position": 18, "level": "B1", "skill": "grammar",
+      "prompt": "If I had more free time, I ___ a photography course.",
+      "options": ["take", "will take", "took", "would take"], "correct_option_index": 3,
+      "explanation": "Нереальное условие в настоящем: if + Past Simple, would + начальная форма глагола."
+    },
+    {
+      "id": "b1-03", "position": 19, "level": "B1", "skill": "grammar",
+      "prompt": "The new sports centre ___ by the mayor last month.",
+      "options": ["opened", "was opened", "has opened", "is opening"], "correct_option_index": 1,
+      "explanation": "Спортивный центр открыли: нужна пассивная форма. Last month требует Past Simple Passive: was opened."
+    },
+    {
+      "id": "b1-04", "position": 20, "level": "B1", "skill": "grammar",
+      "prompt": "That's the teacher ___ helped me prepare for the exam.",
+      "options": ["which", "where", "who", "whose"], "correct_option_index": 2,
+      "explanation": "Who вводит определительное придаточное о человеке и выступает подлежащим: the teacher who helped me."
+    },
+    {
+      "id": "b1-05", "position": 21, "level": "B1", "skill": "vocabulary",
+      "prompt": "The outdoor concert was ___ because of the storm; no new date has been announced.",
+      "options": ["looked after", "turned up", "given away", "called off"], "correct_option_index": 3,
+      "explanation": "Call off означает отменить мероприятие. Look after — заботиться, turn up — появляться, give away — отдавать."
+    },
+    {
+      "id": "b1-06", "position": 22, "level": "B1", "skill": "vocabulary",
+      "prompt": "We must ___ a decision before Friday, or we will lose the booking.",
+      "options": ["make", "do", "take up", "put"], "correct_option_index": 0,
+      "explanation": "Устойчивое сочетание make a decision означает принять решение. Do a decision не употребляется."
+    },
+    {
+      "id": "b1-07", "position": 23, "level": "B1", "skill": "reading",
+      "passage": "At first, residents worried that a new cycle lane would make traffic worse. Six months after it opened, a local survey found that more people were cycling to work. Bus journey times had not changed, although some drivers said parking was harder. The council decided to keep the lane and look for additional parking spaces.",
+      "prompt": "Which statement best describes the council's response?",
+      "options": ["It removed the lane because buses were slower", "It ignored all complaints from drivers", "It kept the lane while trying to address a remaining problem", "It concluded that nobody had changed their travel habits"], "correct_option_index": 2,
+      "explanation": "Совет сохранил велополосу и решил искать дополнительные парковочные места. Это сочетает сохранение меры с решением оставшейся проблемы."
+    },
+    {
+      "id": "b1-08", "position": 24, "level": "B1", "skill": "reading",
+      "passage": "Nina joined an online design course because she could study after work. She enjoyed the practical tasks, but she sometimes waited several days for feedback. In her review she wrote: 'The flexibility suited me, and I learnt useful skills. However, anyone who needs immediate help may prefer a live class.'",
+      "prompt": "What is Nina's overall opinion of the course?",
+      "options": ["It was unsuitable for anyone with a job", "It was useful, but its support could be too slow for some learners", "It had no practical value despite quick feedback", "It was better than a live class for every learner"], "correct_option_index": 1,
+      "explanation": "Нина отмечает удобный график и полезные навыки, но предупреждает о задержках обратной связи. Она не отвергает курс целиком и не рекомендует его всем."
+    }
+  ]
+}

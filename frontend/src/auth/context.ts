@@ -7,6 +7,7 @@ export type AuthValue = {
   loading: boolean
   login: (email: string, password: string) => Promise<void>
   register: (data: RegisterData) => Promise<void>
+  refreshUser: () => Promise<void>
   logout: () => void
 }
 

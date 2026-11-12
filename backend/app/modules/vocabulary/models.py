@@ -21,7 +21,13 @@ class Word(Base):
     """Общий словарь. Одно слово с разными значениями — разные строки."""
 
     __tablename__ = "words"
-    __table_args__ = (UniqueConstraint("text", "part_of_speech", "translation"),)
+    __table_args__ = (
+        UniqueConstraint("text", "part_of_speech", "translation"),
+        CheckConstraint(
+            r"image_url IS NULL OR image_url ~ '^/images/vocabulary/[a-z0-9][a-z0-9-]*\.svg$'",
+            name="local_image_url",
+        ),
+    )
 
     id: Mapped[IntPK]
     text: Mapped[str]
@@ -29,6 +35,7 @@ class Word(Base):
     translation: Mapped[str]
     transcription: Mapped[str | None]
     example: Mapped[str | None]
+    image_url: Mapped[str | None]
 
 
 class TopicWord(Base):

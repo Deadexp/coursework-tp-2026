@@ -8,6 +8,7 @@ __pycache__/
 .venv/
 .pytest_cache/
 .ruff_cache/
+*.egg-info/
 
 # node
 node_modules/
@@ -17,3 +18,9 @@ dist/
 .DS_Store
 .idea/
 .vscode/
+
+# local database backups and browser test output
+*.dump
+.coursework-backups/
+playwright-report/
+test-results/

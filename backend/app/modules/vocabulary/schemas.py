@@ -4,6 +4,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from app.core.enums import Source
 
+LOCAL_IMAGE_PATTERN = r"^/images/vocabulary/[a-z0-9][a-z0-9-]*\.svg$"
+
 
 class WordRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -14,6 +16,7 @@ class WordRead(BaseModel):
     translation: str
     transcription: str | None
     example: str | None
+    image_url: str | None = Field(default=None, pattern=LOCAL_IMAGE_PATTERN)
 
 
 class WordSearchResult(WordRead):
