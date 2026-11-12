@@ -68,8 +68,8 @@ def wrong(question, bank):
 async def test_real_course_topics_and_no_answer_leak(client, auth_headers, db):
     bank = await prepare(client, auth_headers, db)
     topics = (await client.get("/grammar/topics", headers=bot_headers())).json()
-    assert len(topics) == 5
-    assert sum(t["exercises_total"] for t in topics) == 30
+    assert len(topics) == len(load_course().topics)
+    assert sum(t["exercises_total"] for t in topics) == len(bank)
     for topic in topics:
         state = (await start(client, topic["id"])).json()
         payload = jwt.decode(state["session_token"], options={"verify_signature": False})
@@ -279,7 +279,8 @@ async def test_seed_repetition_preserves_attempts_and_no_duplicates(client, auth
     await submit(client, state, right(state["question"], bank))
     await seed(db, load_course())
     topics = (await client.get("/grammar/topics", headers=bot_headers())).json()
-    assert len(topics) == 5 and sum(t["exercises_total"] for t in topics) == 30
+    assert len(topics) == len(load_course().topics)
+    assert sum(t["exercises_total"] for t in topics) == len(bank)
     assert await db.scalar(select(func.count()).select_from(Attempt)) == 1
 
 

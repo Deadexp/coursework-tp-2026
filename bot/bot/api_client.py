@@ -1,7 +1,8 @@
 """The connected bot uses only the backend, never a database or a demo fallback."""
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Literal
+from uuid import UUID
 
 import httpx
 from pydantic import BaseModel, Field, ValidationError, model_validator
@@ -11,6 +12,20 @@ class BackendError(Exception):
     def __init__(self, status: int) -> None:
         self.status = status
         super().__init__(f"Backend request failed ({status})")
+
+
+class ReminderSettings(BaseModel):
+    enabled: bool
+    time: str = Field(pattern=r"^(?:[01][0-9]|2[0-3]):[0-5][0-9]$")
+    timezone: str
+
+
+class ReminderClaim(BaseModel):
+    delivery_id: int = Field(gt=0)
+    claim_token: UUID
+    telegram_id: int = Field(gt=0)
+    local_date: date
+    scheduled_at: datetime
 
 
 class Word(BaseModel):
@@ -146,15 +161,15 @@ class BackendClient:
         if self.owns_http:
             await self.http.aclose()
 
-    async def _request(self, method: str, path: str, sender: int, **kwargs):
+    async def _request(self, method: str, path: str, sender: int | None, **kwargs):
+        headers = {"X-Service-Token": self.service_token}
+        if sender is not None:
+            headers["X-Telegram-ID"] = str(sender)
         try:
             response = await self.http.request(
                 method,
                 path,
-                headers={
-                    "X-Service-Token": self.service_token,
-                    "X-Telegram-ID": str(sender),
-                },
+                headers=headers,
                 **kwargs,
             )
         except httpx.RequestError:
@@ -172,6 +187,41 @@ class BackendClient:
     async def me(self, sender: int) -> str:
         result = await self._request("GET", "/telegram/me", sender)
         return self._display_name(result)
+
+    async def reminder_settings(self, sender: int, **changes) -> ReminderSettings:
+        result = await self._request(
+            "PATCH" if changes else "GET",
+            "/reminders/settings",
+            sender,
+            **({"json": changes} if changes else {}),
+        )
+        return self._validated(ReminderSettings, result)
+
+    async def claim_reminders(self, limit: int = 1) -> list[ReminderClaim]:
+        result = await self._request("POST", "/reminders/claims", None, json={"limit": limit})
+        if not isinstance(result, list):
+            raise BackendError(502)
+        return [self._validated(ReminderClaim, item) for item in result]
+
+    async def acknowledge_reminder(
+        self,
+        claim: ReminderClaim,
+        outcome: str,
+        *,
+        retry_after_seconds: int = 0,
+        telegram_message_id: int | None = None,
+    ) -> None:
+        await self._request(
+            "POST",
+            f"/reminders/deliveries/{claim.delivery_id}/ack",
+            None,
+            json={
+                "claim_token": str(claim.claim_token),
+                "outcome": outcome,
+                "retry_after_seconds": retry_after_seconds,
+                "telegram_message_id": telegram_message_id,
+            },
+        )
 
     async def link(self, sender: int, code: str) -> str:
         result = await self._request(

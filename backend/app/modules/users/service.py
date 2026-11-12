@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.enums import CefrLevel
 from app.core.security import hash_password, verify_password
 from app.modules.users.models import User
 from app.modules.users.schemas import UserCreate
@@ -42,8 +43,11 @@ async def get_user(session: AsyncSession, user_id: int) -> User | None:
     return await session.get(User, user_id)
 
 
-async def set_level(session: AsyncSession, user_id: int, level):
+async def set_level(
+    session: AsyncSession, user_id: int, level: CefrLevel, *, commit: bool = True
+) -> CefrLevel:
     user = await session.scalar(select(User).where(User.id == user_id).with_for_update())
     user.cefr_level = level
-    await session.commit()
+    if commit:
+        await session.commit()
     return user.cefr_level

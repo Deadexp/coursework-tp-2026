@@ -11,7 +11,7 @@ import asyncio
 import json
 from pathlib import Path
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,8 +19,11 @@ from app.core.db import SessionLocal
 from app.core.enums import CefrLevel, ExerciseType
 from app.modules.learning.models import ErrorType, Exercise, ExerciseAnswer, Topic
 from app.modules.vocabulary.models import TopicWord, Word
+from app.modules.vocabulary.modules_models import ModuleWord, VocabularyModule
+from app.modules.vocabulary.schemas import LOCAL_IMAGE_PATTERN
 
 CONTENT_FILE = Path(__file__).resolve().parents[1] / "content" / "course.json"
+MODULES_FILE = CONTENT_FILE.with_name("vocabulary_modules.json")
 
 
 class ErrorTypeIn(BaseModel):
@@ -35,6 +38,7 @@ class WordIn(BaseModel):
     translation: str
     transcription: str | None = None
     example: str | None = None
+    image_url: str | None = Field(default=None, pattern=LOCAL_IMAGE_PATTERN)
 
 
 class ExerciseIn(BaseModel):
@@ -74,13 +78,47 @@ class Course(BaseModel):
     def check_references(self) -> "Course":
         titles = {t.title for t in self.topics}
         codes = {e.code for e in self.error_types}
+        if len(titles) != len(self.topics) or len(codes) != len(self.error_types):
+            raise ValueError("Названия тем и коды ошибок должны быть уникальными")
+        if len({t.position for t in self.topics}) != len(self.topics):
+            raise ValueError("Позиции тем должны быть уникальными")
         for et in self.error_types:
             if et.topic is not None and et.topic not in titles:
                 raise ValueError(f"Тип ошибки {et.code!r} ссылается на несуществующую тему")
         for topic in self.topics:
+            if len({ex.prompt for ex in topic.exercises}) != len(topic.exercises):
+                raise ValueError(f"{topic.title!r}: задания должны иметь разные формулировки")
             for ex in topic.exercises:
                 if ex.error_type is not None and ex.error_type not in codes:
                     raise ValueError(f"{ex.prompt!r}: неизвестный тип ошибки {ex.error_type!r}")
+        return self
+
+
+class VocabularyModuleIn(BaseModel):
+    slug: str = Field(pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+    title: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    cefr_level: CefrLevel
+    position: int = Field(gt=0)
+    words: list[WordIn] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def unique_words(self) -> "VocabularyModuleIn":
+        keys = {(w.text, w.part_of_speech, w.translation) for w in self.words}
+        if len(keys) != len(self.words):
+            raise ValueError(f"{self.slug!r}: слово повторяется внутри модуля")
+        return self
+
+
+class VocabularyModules(BaseModel):
+    modules: list[VocabularyModuleIn]
+
+    @model_validator(mode="after")
+    def unique_modules(self) -> "VocabularyModules":
+        if len({m.slug for m in self.modules}) != len(self.modules):
+            raise ValueError("Slug модуля должен быть уникальным")
+        if len({m.position for m in self.modules}) != len(self.modules):
+            raise ValueError("Позиция модуля должна быть уникальной")
         return self
 
 
@@ -88,7 +126,13 @@ def load_course(path: Path = CONTENT_FILE) -> Course:
     return Course.model_validate(json.loads(path.read_text(encoding="utf-8")))
 
 
-async def seed(session: AsyncSession, course: Course) -> None:
+def load_vocabulary_modules(path: Path = MODULES_FILE) -> VocabularyModules:
+    return VocabularyModules.model_validate(json.loads(path.read_text(encoding="utf-8")))
+
+
+async def seed(
+    session: AsyncSession, course: Course, modules: VocabularyModules | None = None
+) -> None:
     topics = {t.title: await _upsert_topic(session, t) for t in course.topics}
     await session.flush()
 
@@ -116,6 +160,8 @@ async def seed(session: AsyncSession, course: Course) -> None:
             )
             await _upsert_exercise(session, topic.id, ex_in, error_type)
 
+    if modules is not None:
+        await _seed_modules(session, modules)
     await session.commit()
 
 
@@ -157,7 +203,33 @@ async def _upsert_word(session: AsyncSession, data: WordIn) -> Word:
         session.add(word)
     word.transcription = data.transcription
     word.example = data.example
+    # A course-only refresh must not erase an illustration supplied by a module.
+    if "image_url" in data.model_fields_set:
+        word.image_url = data.image_url
     return word
+
+
+async def _seed_modules(session: AsyncSession, data: VocabularyModules) -> None:
+    for module_in in data.modules:
+        module = await session.scalar(
+            select(VocabularyModule).where(VocabularyModule.slug == module_in.slug)
+        )
+        if module is None:
+            module = VocabularyModule(slug=module_in.slug)
+            session.add(module)
+        module.title = module_in.title
+        module.description = module_in.description
+        module.cefr_level = module_in.cefr_level
+        module.position = module_in.position
+        await session.flush()
+
+        # These are catalog memberships, not study history. Replacing them allows
+        # card reordering while preserving Word IDs, UserWords and WordReviews.
+        await session.execute(delete(ModuleWord).where(ModuleWord.module_id == module.id))
+        for position, word_in in enumerate(module_in.words, start=1):
+            word = await _upsert_word(session, word_in)
+            await session.flush()
+            session.add(ModuleWord(module_id=module.id, word_id=word.id, position=position))
 
 
 async def _upsert_exercise(
@@ -187,11 +259,16 @@ async def _upsert_exercise(
 
 async def main() -> None:
     course = load_course()
+    modules = load_vocabulary_modules()
     async with SessionLocal() as session:
-        await seed(session, course)
+        await seed(session, course, modules)
     exercises = sum(len(t.exercises) for t in course.topics)
     words = sum(len(t.words) for t in course.topics)
-    print(f"Загружено: тем {len(course.topics)}, упражнений {exercises}, слов {words}")
+    cards = sum(len(m.words) for m in modules.modules)
+    print(
+        f"Загружено: тем {len(course.topics)}, упражнений {exercises}, слов курса {words}; "
+        f"словарных модулей {len(modules.modules)}, карточек {cards}"
+    )
 
 
 if __name__ == "__main__":

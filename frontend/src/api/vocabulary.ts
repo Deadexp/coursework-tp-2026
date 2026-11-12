@@ -7,6 +7,7 @@ export type Word = {
   translation: string
   transcription: string | null
   example: string | null
+  image_url?: string | null
 }
 
 export type UserWord = {
@@ -21,6 +22,25 @@ export type UserWord = {
 export type SearchResult = Word & { in_vocabulary: boolean }
 export type ReviewCard = { word: Word; choices: string[] }
 export type ProblemWord = { word: Word; failures: number; last_failed_at: string }
+
+export type VocabularyModule = {
+  id: number
+  slug: string
+  title: string
+  description: string
+  cefr_level: string
+  position: number
+  word_count: number
+  in_vocabulary_count: number
+  cover_image_url: string | null
+}
+export type VocabularyModuleDetail = VocabularyModule & { words: SearchResult[] }
+
+export const listVocabularyModules = () => request<VocabularyModule[]>('/vocabulary/modules')
+export const getVocabularyModule = (moduleId: number) =>
+  request<VocabularyModuleDetail>(`/vocabulary/modules/${moduleId}`)
+export const addVocabularyModule = (moduleId: number) =>
+  request<{ added: number }>(`/vocabulary/modules/${moduleId}/add`, { method: 'POST' })
 
 const json = (body: unknown): RequestInit => ({
   method: 'POST',

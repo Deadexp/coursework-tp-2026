@@ -10,6 +10,8 @@ import { TalkListPage } from './pages/TalkListPage'
 import { TalkPage } from './pages/TalkPage'
 import { TopicPage } from './pages/TopicPage'
 import { VocabularyPage } from './pages/VocabularyPage'
+import { ProfilePage } from './pages/ProfilePage'
+import { PlacementPage } from './pages/PlacementPage'
 
 export default function App() {
   return (
@@ -26,6 +28,8 @@ export default function App() {
               <Route path="/topics/:topicId" element={<TopicPage />} />
               <Route path="/vocabulary" element={<VocabularyPage />} />
               <Route path="/review" element={<ReviewPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/placement" element={<PlacementPage />} />
               <Route path="/talk" element={<TalkListPage />} />
               <Route path="/talk/:dialogId" element={<TalkPage />} />
             </Route>

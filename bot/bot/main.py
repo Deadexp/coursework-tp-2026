@@ -1,6 +1,5 @@
 import argparse
 import asyncio
-import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.exceptions import (
@@ -13,6 +12,8 @@ from aiogram.types import BotCommand
 from aiogram.utils.token import TokenValidationError
 from pydantic import ValidationError
 
+from bot.runtime import configure_logging, run_polling
+
 
 async def main() -> None:
     parser = argparse.ArgumentParser(description="Telegram-бот курсового проекта")
@@ -24,8 +25,7 @@ async def main() -> None:
     args = parser.parse_args()
     from bot.config import settings
 
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger("httpx").setLevel(logging.WARNING)
+    configure_logging(settings.bot_token, settings.bot_service_token)
     dispatcher = Dispatcher(events_isolation=SimpleEventIsolation())
     backend = None
     if args.demo:
@@ -77,10 +77,15 @@ async def main() -> None:
                     ("daily", "Практика дня"),
                     ("progress", "Мой прогресс"),
                     ("level", "Уровень английского"),
+                    ("reminders", "Время и настройки напоминаний"),
                     ("talk", "О разговоре на английском"),
                 ]
-            await bot.set_my_commands([BotCommand(command=c, description=d) for c, d in commands])
-            await dispatcher.start_polling(bot)
+            await run_polling(
+                dispatcher,
+                bot,
+                [BotCommand(command=c, description=d) for c, d in commands],
+                backend,
+            )
     finally:
         if backend is not None:
             await backend.aclose()

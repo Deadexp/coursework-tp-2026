@@ -20,6 +20,7 @@ from aiogram.types import (
 from bot.api_client import BackendClient, BackendError, Word
 from bot.grammar_ui import GrammarUI
 from bot.practice_ui import PracticeUI
+from bot.reminder_ui import ReminderUI
 
 BUTTONS = {
     "📖 Мой словарь": "dictionary",
@@ -32,6 +33,7 @@ BUTTONS = {
     "☀️ Практика дня": "daily",
     "📊 Мой прогресс": "progress",
     "🎚 Уровень": "level",
+    "⏰ Напоминания": "reminders",
     "💬 Разговор на английском": "talk",
 }
 MENU = ReplyKeyboardMarkup(
@@ -42,6 +44,7 @@ MENU = ReplyKeyboardMarkup(
             ("📚 Карточки слов", "📝 Мини-тест"),
             ("🔁 Сложные слова", "☀️ Практика дня"),
             ("📊 Мой прогресс", "🎚 Уровень"),
+            ("⏰ Напоминания",),
             ("💬 Разговор на английском",),
             ("🏠 Главное меню", "❓ Помощь"),
         )
@@ -78,6 +81,7 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
     flows: dict[int, Flow] = {}
     practice = PracticeUI(client, MENU)
     grammar = GrammarUI(client, MENU)
+    reminders = ReminderUI(client, MENU)
     connect_help = (
         "Открой сайт " + website_url + ", войди в свой аккаунт и в разделе «Словарь» "
         "нажми «Подключить Telegram». Открой полученную ссылку и нажми «Запустить». "
@@ -88,6 +92,7 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
         flows.pop(user_id, None)
         practice.cancel_local(user_id)
         grammar.cancel_local(user_id)
+        reminders.cancel_local(user_id)
         text = {
             403: "Аккаунт Telegram ещё не подключён.\n\n" + connect_help,
             401: "Служебная авторизация бота не настроена. Обратись к разработчику.",
@@ -186,6 +191,7 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
                 "/daily — до 3 карточек и до 2 заданий на ввод; если слов мало, занятие короче.\n"
                 "При наличии примера будет пропуск, иначе ввод по переводу.\n"
                 "/progress — общие результаты; /level — уровень аккаунта.\n"
+                "/reminders — включить или выключить напоминания, выбрать время и часовой пояс.\n"
                 "Тест по словам и практика дня продолжаются после перезапуска. "
                 "Незавершённый тест по грамматике после перезапуска нужно начать заново; "
                 "принятые ответы остаются. Новый день — по UTC (03:00 по Москве). "
@@ -199,6 +205,7 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
         flows.pop(user_id, None)
         practice.cancel_local(user_id)
         grammar.cancel_local(user_id)
+        reminders.cancel_local(user_id)
         if name == "quiz":
             await grammar.topics(message, user_id)
         elif name == "wordquiz":
@@ -207,6 +214,8 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
             await practice.start(message, user_id, "daily")
         elif name == "level":
             await practice.level(message, user_id)
+        elif name == "reminders":
+            await reminders.show(message, user_id)
         elif name == "start":
             await home(message, user_id)
         elif name in ("cancel", "stop"):
@@ -247,6 +256,7 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
         flows.pop(user_id, None)
         practice.cancel_local(user_id)
         grammar.cancel_local(user_id)
+        reminders.cancel_local(user_id)
         try:
             if command.args:
                 if not re.fullmatch(r"[A-Za-z0-9_-]{32,64}", command.args):
@@ -279,6 +289,7 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
             "talk",
             "level",
             "progress",
+            "reminders",
         )
     )
     @router.message(F.text.in_(BUTTONS))
@@ -292,6 +303,12 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
     @router.callback_query()
     async def callback(query: CallbackQuery) -> None:
         user_id = query.from_user.id
+        if (query.data or "").startswith("reminder:"):
+            try:
+                await reminders.callback(query, user_id)
+            except BackendError as exc:
+                await error(query.message, user_id, exc)
+            return
         if (query.data or "").startswith(
             ("gtopic:", "gmix:", "gwords:", "ghome:", "gthemes:", "gagain:", "gnext:", "gchoice:")
         ):
@@ -401,6 +418,8 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
             await message.answer("Команда не распознана. /help — помощь; /cancel — отмена.")
             return
         try:
+            if await reminders.text(message, user_id):
+                return
             if await grammar.text(message, user_id):
                 return
             if await practice.text(message, user_id):
