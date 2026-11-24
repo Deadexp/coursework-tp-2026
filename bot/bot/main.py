@@ -14,6 +14,14 @@ from pydantic import ValidationError
 
 from bot.runtime import configure_logging, run_polling
 
+CONNECTED_COMMANDS = [
+    ("start", "Меню"),
+    ("dictionary", "Словарь"),
+    ("quiz", "Мини-тест"),
+    ("stats", "Статистика"),
+    ("help", "Помощь"),
+]
+
 
 async def main() -> None:
     parser = argparse.ArgumentParser(description="Telegram-бот курсового проекта")
@@ -42,7 +50,8 @@ async def main() -> None:
             or settings.bot_service_token == "replace-with-a-random-service-token"
         ):
             raise SystemExit(
-                "Подключённому режиму нужен непустой случайный BOT_SERVICE_TOKEN (не менее 32 символов), одинаковый у сервера и бота. См. CONNECTED-WINDOWS.md."
+                "Подключённому режиму нужен непустой случайный BOT_SERVICE_TOKEN "
+                "(не менее 32 символов), одинаковый у сервера и бота. См. CONNECTED-WINDOWS.md."
             )
         backend = BackendClient(settings.api_base_url, settings.bot_service_token)
         dispatcher.include_router(make_connected_router(backend, settings.website_url))
@@ -62,24 +71,7 @@ async def main() -> None:
                 ("help", "Помощь"),
             ]
             if not args.demo:
-                commands = [
-                    ("start", "Главное меню"),
-                    ("dictionary", "Мой словарь"),
-                    ("addword", "Добавить слово"),
-                    ("review", "Карточки из личного словаря"),
-                    ("difficult", "Сложные слова"),
-                    ("link", "Как подключить аккаунт"),
-                    ("cancel", "Отмена"),
-                    ("stop", "Закончить занятие"),
-                    ("help", "Помощь"),
-                    ("quiz", "Мини-тест"),
-                    ("wordquiz", "Тест по личным словам"),
-                    ("daily", "Практика дня"),
-                    ("progress", "Мой прогресс"),
-                    ("level", "Уровень английского"),
-                    ("reminders", "Время и настройки напоминаний"),
-                    ("talk", "О разговоре на английском"),
-                ]
+                commands = CONNECTED_COMMANDS
             await run_polling(
                 dispatcher,
                 bot,

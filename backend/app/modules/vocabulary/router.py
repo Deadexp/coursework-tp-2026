@@ -1,11 +1,11 @@
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query, Response, status
+from fastapi import APIRouter, HTTPException, Query, Request, Response, status
 
 from app.core.db import SessionDep
 from app.core.enums import Source
 from app.modules.users.telegram_auth import VocabularyUser
-from app.modules.vocabulary import service
+from app.modules.vocabulary import image_service, service
 from app.modules.vocabulary.schemas import (
     AddedCount,
     ProblemWord,
@@ -78,9 +78,24 @@ async def due_cards(
     user: VocabularyUser,
     session: SessionDep,
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
+    include_future: bool = False,
 ) -> list[ReviewCard]:
     """Слова, которые пора повторить сегодня (для сайта и Telegram-бота)."""
-    return await service.due_cards(session, user.id, limit)
+    return await service.due_cards(session, user.id, limit, include_future=include_future)
+
+
+@router.put("/vocabulary/{word_id}/image", status_code=204)
+async def upload_image(
+    word_id: int, request: Request, user: VocabularyUser, session: SessionDep
+) -> Response:
+    await image_service.upload(session, user.id, word_id, request)
+    return Response(status_code=204)
+
+
+@router.get("/vocabulary/{word_id}/image")
+async def word_image(word_id: int, user: VocabularyUser, session: SessionDep) -> Response:
+    data, media_type = await image_service.read(session, user.id, word_id)
+    return Response(data, media_type=media_type, headers={"Cache-Control": "private, no-store"})
 
 
 @router.post("/vocabulary/{word_id}/reviews")

@@ -12,8 +12,9 @@ services:
   api:
     build: ./backend
     env_file: .env
+    environment: { WORD_IMAGES_DIR: "/app/word-images" }
     ports: ["8000:8000"]
-    volumes: [./backend:/app]
+    volumes: [./backend:/app, "./frontend/public/images/vocabulary:/app/word-images:ro"]
     depends_on:
       db: { condition: service_healthy }
     command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"

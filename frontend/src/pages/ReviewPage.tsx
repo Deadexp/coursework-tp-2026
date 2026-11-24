@@ -5,6 +5,7 @@ import { ProgressBar } from '../components/ProgressBar'
 import { plural } from '../format'
 import { useApi } from '../hooks/useApi'
 import '../vocabulary-modules.css'
+import { WordImage } from '../components/WordImage'
 
 // Оценки SM-2 для кнопок — как в docs/api-vocabulary.md.
 const RATINGS = [
@@ -98,15 +99,7 @@ export function ReviewPage() {
       </div>
 
       <section className="panel flashcard" aria-live="polite">
-        {card.word.image_url && (
-          <img
-            className="review-word-image"
-            src={card.word.image_url}
-            alt=""
-            width="156"
-            height="156"
-          />
-        )}
+        <WordImage word={card.word} className="review-word-image" width={156} height={156} />
         <p className="flashcard-word">{card.word.text}</p>
         {card.word.transcription && <p className="muted">{card.word.transcription}</p>}
 

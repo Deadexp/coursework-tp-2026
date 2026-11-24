@@ -7,7 +7,14 @@ import httpx
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.base import BaseSession
 from aiogram.fsm.storage.memory import SimpleEventIsolation
-from aiogram.methods import AnswerCallbackQuery, GetMe, SendMessage
+from aiogram.methods import (
+    AnswerCallbackQuery,
+    DeleteMessage,
+    EditMessageReplyMarkup,
+    GetMe,
+    SendMessage,
+    SendPhoto,
+)
 from aiogram.types import CallbackQuery, Chat, Message, Update, User
 
 from bot.api_client import BackendClient, BackendError
@@ -23,6 +30,9 @@ class FakeTelegram(BaseSession):
         super().__init__()
         self.sent = []
         self.answers = []
+        self.deleted = []
+        self.delete_error = None
+        self.cleared = []
 
     async def close(self):
         pass
@@ -33,12 +43,12 @@ class FakeTelegram(BaseSession):
     async def make_request(self, bot, method, timeout=None):
         if isinstance(method, GetMe):
             return User(id=123456, is_bot=True, first_name="Test", username="test_bot")
-        if isinstance(method, SendMessage):
+        if isinstance(method, (SendMessage, SendPhoto)):
             result = Message(
-                message_id=len(self.sent) + 1,
+                message_id=10000 + len(self.sent),
                 date=datetime.now(UTC),
                 chat=Chat(id=method.chat_id, type="private"),
-                text=method.text,
+                text=method.text if isinstance(method, SendMessage) else method.caption,
                 reply_markup=method.reply_markup
                 if getattr(method.reply_markup, "inline_keyboard", None)
                 else None,
@@ -47,6 +57,14 @@ class FakeTelegram(BaseSession):
             return result
         if isinstance(method, AnswerCallbackQuery):
             self.answers.append(method.text or "")
+            return True
+        if isinstance(method, DeleteMessage):
+            if self.delete_error:
+                raise self.delete_error
+            self.deleted.append((method.chat_id, method.message_id))
+            return True
+        if isinstance(method, EditMessageReplyMarkup):
+            self.cleared.append((method.chat_id, method.message_id))
             return True
         raise AssertionError(type(method).__name__)
 
@@ -158,7 +176,15 @@ class ConnectedTests(unittest.IsolatedAsyncioTestCase):
             self.rows = [w for w in self.rows if w["id"] != int(path.split("/")[-1])]
             return httpx.Response(204)
         if request.method == "POST" and path == "/vocabulary":
-            return httpx.Response(201, json={})
+            return httpx.Response(201, json={"word": dict(WORD, **json.loads(request.content))})
+        if path.endswith("/image"):
+            return (
+                httpx.Response(204)
+                if request.method == "PUT"
+                else httpx.Response(
+                    200, content=b"synthetic-image", headers={"Content-Type": "image/jpeg"}
+                )
+            )
         raise AssertionError((request.method, path))
 
     async def send(self, text, user_id=SENDER, chat_type="private"):
@@ -247,7 +273,8 @@ class ConnectedTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_delete_requires_confirmation_and_preserves_other_users(self):
         page = await self.send("/dictionary")
-        confirm = await self.click(page, self.button(page, "delete"))
+        page = await self.click(page, self.button(page, "delete"))
+        confirm = await self.click(page, self.button(page, "pickdelete"))
         self.assertFalse(any(r.method == "DELETE" for r in self.calls))
         await self.click(confirm, self.button(confirm, "remove"), user_id=SENDER + 1)
         self.assertFalse(any(r.method == "DELETE" for r in self.calls))

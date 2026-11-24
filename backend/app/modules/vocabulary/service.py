@@ -128,13 +128,16 @@ async def remove_word(session: AsyncSession, user_id: int, word_id: int) -> bool
     return result.rowcount > 0
 
 
-async def due_cards(session: AsyncSession, user_id: int, limit: int) -> list[ReviewCard]:
+async def due_cards(
+    session: AsyncSession, user_id: int, limit: int, *, include_future: bool = False
+) -> list[ReviewCard]:
     """Слова, которые пора повторить (сначала самые «просроченные»), с вариантами ответа."""
     words = (
-        await session.scalars(
-            select(Word)
+        await session.execute(
+            select(Word, UserWord)
             .join(UserWord, UserWord.word_id == Word.id)
-            .where(UserWord.user_id == user_id, UserWord.next_review_at <= func.now())
+            .where(UserWord.user_id == user_id)
+            .where(True if include_future else UserWord.next_review_at <= func.now())
             .order_by(UserWord.next_review_at)
             .limit(limit)
         )
@@ -150,12 +153,12 @@ async def due_cards(session: AsyncSession, user_id: int, limit: int) -> list[Rev
         )
     ).all()
     cards = []
-    for word in words:
+    for word, user_word in words:
         distractors = [t for t in pool if t != word.translation]
         choices = random.sample(distractors, min(CHOICES_PER_CARD - 1, len(distractors)))
         choices.append(word.translation)
         random.shuffle(choices)
-        cards.append(ReviewCard(word=WordRead.model_validate(word), choices=choices))
+        cards.append(ReviewCard(word=_word_read(user_word, word), choices=choices))
     return cards
 
 
@@ -218,8 +221,20 @@ async def problem_words(
         .order_by(failures.desc(), last_failed_at.desc())
         .limit(limit)
     )
+    rows = rows.all()
+    personal = {
+        entry.word_id: entry
+        for entry in (
+            await session.scalars(
+                select(UserWord).where(
+                    UserWord.user_id == user_id,
+                    UserWord.word_id.in_([w.id for w, _, _ in rows]),
+                )
+            )
+        ).all()
+    }
     return [
-        ProblemWord(word=WordRead.model_validate(w), failures=n, last_failed_at=last)
+        ProblemWord(word=_word_read(personal[w.id], w), failures=n, last_failed_at=last)
         for w, n, last in rows
     ]
 
@@ -252,7 +267,7 @@ async def _get_or_create_word(session: AsyncSession, data: VocabularyAdd) -> Wor
 
 def _user_word_read(user_word: UserWord, word: Word) -> UserWordRead:
     return UserWordRead(
-        word=WordRead.model_validate(word),
+        word=_word_read(user_word, word),
         added_at=user_word.added_at,
         next_review_at=user_word.next_review_at,
         interval_days=user_word.interval_days,
@@ -267,3 +282,11 @@ async def count_due(session: AsyncSession, user_id: int) -> int:
         .select_from(UserWord)
         .where(UserWord.user_id == user_id, UserWord.next_review_at <= func.now())
     )
+
+
+def _word_read(user_word: UserWord, word: Word) -> WordRead:
+    result = WordRead.model_validate(word)
+    if user_word.image_data:
+        version = hashlib.sha256(user_word.image_data).hexdigest()[:12]
+        result.image_url = f"/vocabulary/{word.id}/image?v={version}"
+    return result

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.api_client import BackendClient, BackendError, ReminderSettings
+from bot.chat_ui import ChatView
 
 TIME_PATTERN = r"(?:[01][0-9]|2[0-3]):[0-5][0-9]"
 
@@ -20,8 +21,9 @@ class ReminderFlow:
 
 
 class ReminderUI:
-    def __init__(self, backend: BackendClient, menu) -> None:
+    def __init__(self, backend: BackendClient, menu, view: ChatView | None = None) -> None:
         self.backend, self.menu = backend, menu
+        self.view = view or ChatView()
         self.flows: dict[int, ReminderFlow] = {}
 
     def cancel_local(self, user_id: int) -> None:
@@ -32,12 +34,11 @@ class ReminderUI:
         ticket = secrets.token_hex(8)
         self.flows[user_id] = ReminderFlow(ticket, settings)
         toggle = "off" if settings.enabled else "on"
-        await message.answer(
+        await self.view.show(
+            message,
             "⏰ Напоминания " + ("включены" if settings.enabled else "выключены") + ".\n\n"
             f"Время: {settings.time}\nЧасовой пояс: {settings.timezone}\n\n"
-            "Одно плановое напоминание в день. Если компьютер с ботом выключен, "
-            "сообщение не придёт; после запуска возможна доставка в течение часа от выбранного времени.\n"
-            "Включение — только по твоему выбору. /stop — выйти из настройки.",
+            "Одно напоминание в день, пока бот запущен. /stop — выйти.",
             reply_markup=InlineKeyboardMarkup(
                 inline_keyboard=[
                     [
@@ -72,7 +73,8 @@ class ReminderUI:
         if action == "edit":
             flow.stage = "time"
             flow.ticket = secrets.token_hex(8)
-            await query.message.answer(
+            await self.view.show(
+                query.message,
                 "Введи время в формате ЧЧ:ММ, например 19:00. /stop — отмена."
             )
         else:
@@ -87,20 +89,22 @@ class ReminderUI:
         value = (message.text or "").strip()
         if flow.stage == "time":
             if not re.fullmatch(TIME_PATTERN, value):
-                await message.answer(
+                await self.view.show(
+                    message,
                     "Нужно время от 00:00 до 23:59, например 19:00. /stop — отмена."
                 )
                 return True
             flow.new_time = value
             flow.stage = "timezone"
-            await message.answer(
-                "Введи часовой пояс IANA: например Europe/Moscow, Europe/Berlin или Asia/Yekaterinburg.\n"
+            await self.view.show(
+                message,
+                "Введи часовой пояс, например Europe/Moscow или Europe/Berlin.\n"
                 f"Чтобы оставить {flow.settings.timezone}, отправь «оставить». /stop — отмена."
             )
             return True
         timezone = flow.settings.timezone if value.lower() == "оставить" else value
         if not timezone or len(timezone) > 100:
-            await message.answer("Введи часовой пояс IANA, например Europe/Moscow.")
+            await self.view.show(message, "Введи часовой пояс IANA, например Europe/Moscow.")
             return True
         try:
             settings = await self.backend.reminder_settings(
@@ -109,10 +113,10 @@ class ReminderUI:
         except BackendError as error:
             if error.status != 422:
                 raise
-            await message.answer(
+            await self.view.show(
+                message,
                 "Такой часовой пояс не найден. Пример: Europe/Moscow. /stop — отмена."
             )
             return True
-        await message.answer("Время и часовой пояс сохранены на сервере.", reply_markup=self.menu)
         await self.show(message, user_id, settings)
         return True

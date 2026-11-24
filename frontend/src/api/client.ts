@@ -37,6 +37,15 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
 
 type ValidationIssue = { loc?: (string | number)[]; msg: string }
 
+export async function requestBlob(path: string): Promise<Blob> {
+  const token = tokenStorage.get()
+  const response = await fetch(BASE_URL + path, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+  if (!response.ok) throw await toApiError(response)
+  return response.blob()
+}
+
 async function toApiError(response: Response): Promise<ApiError> {
   const body: { detail?: unknown } | null = await response.json().catch(() => null)
   const detail = body?.detail

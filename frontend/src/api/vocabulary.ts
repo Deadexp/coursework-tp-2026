@@ -59,6 +59,13 @@ export const addWord = (wordId: number) =>
 export const addOwnWord = (text: string, translation: string) =>
   request<UserWord>('/vocabulary', json({ text, translation }))
 
+export const uploadWordImage = (wordId: number, image: File) =>
+  request<null>(`/vocabulary/${wordId}/image`, {
+    method: 'PUT',
+    headers: { 'Content-Type': image.type || 'application/octet-stream' },
+    body: image,
+  })
+
 export const addTopicWords = (topicId: number) =>
   request<{ added: number }>(`/vocabulary/topics/${topicId}`, { method: 'POST' })
 

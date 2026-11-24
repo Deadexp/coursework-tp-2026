@@ -32,6 +32,7 @@ class Word(BaseModel):
     id: int
     text: str
     translation: str
+    image_url: str | None = None
 
 
 class UserWord(BaseModel):
@@ -161,7 +162,9 @@ class BackendClient:
         if self.owns_http:
             await self.http.aclose()
 
-    async def _request(self, method: str, path: str, sender: int | None, **kwargs):
+    async def _request(
+        self, method: str, path: str, sender: int | None, *, binary: bool = False, **kwargs
+    ):
         headers = {"X-Service-Token": self.service_token}
         if sender is not None:
             headers["X-Telegram-ID"] = str(sender)
@@ -177,6 +180,8 @@ class BackendClient:
             raise BackendError(0) from None
         if response.is_error:
             raise BackendError(response.status_code)
+        if binary:
+            return response.content
         if response.status_code == 204:
             return None
         try:
@@ -249,8 +254,8 @@ class BackendClient:
         except ValidationError:
             raise BackendError(502) from None
 
-    async def add_word(self, sender: int, text: str, translation: str) -> None:
-        await self._request(
+    async def add_word(self, sender: int, text: str, translation: str):
+        return await self._request(
             "POST",
             "/vocabulary",
             sender,
@@ -265,11 +270,27 @@ class BackendClient:
 
     async def cards(self, sender: int, *, difficult: bool = False) -> list[Word]:
         path = "/vocabulary/problem-words" if difficult else "/vocabulary/review"
-        result = await self._request("GET", path, sender, params={"limit": 20})
+        result = await self._request(
+            "GET",
+            path,
+            sender,
+            params={"limit": 20, **({"include_future": "true"} if not difficult else {})},
+        )
         try:
             return [Word.model_validate(row["word"]) for row in result]
         except (ValidationError, KeyError, TypeError):
             raise BackendError(502) from None
+
+    async def upload_image(self, sender: int, word_id: int, image: bytes) -> None:
+        await self._request("PUT", f"/vocabulary/{word_id}/image", sender, content=image)
+
+    async def image(self, sender: int, word_id: int) -> bytes | None:
+        try:
+            return await self._request("GET", f"/vocabulary/{word_id}/image", sender, binary=True)
+        except BackendError as exc:
+            if exc.status == 404:
+                return None
+            raise
 
     async def review(self, sender: int, word_id: int, quality: int) -> ReviewResult:
         result = await self._request(

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import {
   addOwnWord,
@@ -6,12 +6,14 @@ import {
   listVocabulary,
   removeWord,
   searchWords,
+  uploadWordImage,
   type SearchResult,
 } from '../api/vocabulary'
 import { formatNextReview, plural } from '../format'
 import { useApi } from '../hooks/useApi'
 import { TelegramConnection } from '../components/TelegramConnection'
 import { VocabularyModules } from '../components/VocabularyModules'
+import { WordImage } from '../components/WordImage'
 
 export function VocabularyPage() {
   const { data: words, error, loading, reload } = useApi(useCallback(() => listVocabulary(), []))
@@ -19,6 +21,9 @@ export function VocabularyPage() {
   const [results, setResults] = useState<SearchResult[]>([])
   const [own, setOwn] = useState({ text: '', translation: '' })
   const [message, setMessage] = useState('')
+  const [ownImage, setOwnImage] = useState<File | null>(null)
+  const [saving, setSaving] = useState(false)
+  const imageInput = useRef<HTMLInputElement>(null)
   // Пока строка поиска пуста, старые результаты не показываем.
   const visibleResults = query.trim() ? results : []
 
@@ -40,10 +45,19 @@ export function VocabularyPage() {
   async function handleAddOwn(event: FormEvent) {
     event.preventDefault()
     setMessage('')
+    setSaving(true)
     try {
-      await addOwnWord(own.text.trim(), own.translation.trim())
+      const saved = await addOwnWord(own.text.trim(), own.translation.trim())
+      let imageSaved = true
+      if (ownImage) {
+        try { await uploadWordImage(saved.word.id, ownImage) }
+        catch { imageSaved = false }
+      }
       setOwn({ text: '', translation: '' })
-      setMessage('Слово добавлено.')
+      setOwnImage(null)
+      if (imageInput.current) imageInput.current.value = ''
+      setMessage(imageSaved ? 'Слово добавлено.' :
+        'Слово добавлено, но картинка не загрузилась. Добавьте её в списке слов ниже.')
       void reload()
     } catch (err) {
       setMessage(
@@ -51,6 +65,21 @@ export function VocabularyPage() {
           ? 'Это слово уже в словаре.'
           : 'Не удалось добавить слово.',
       )
+    } finally { setSaving(false) }
+  }
+
+  async function handleImage(wordId: number, file?: File) {
+    if (!file) return
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage('Картинка должна быть не больше 5 МБ.')
+      return
+    }
+    try {
+      await uploadWordImage(wordId, file)
+      setMessage('Картинка сохранена. Она появится в боте при открытии карточек.')
+      void reload()
+    } catch (err) {
+      setMessage(err instanceof Error ? err.message : 'Не удалось сохранить картинку.')
     }
   }
 
@@ -123,6 +152,7 @@ export function VocabularyPage() {
             <input
               className="answer-input"
               id="own-text"
+              disabled={saving}
               aria-label="Слово по-английски"
               placeholder="Слово, например wolf"
               value={own.text}
@@ -131,6 +161,7 @@ export function VocabularyPage() {
             <input
               className="answer-input"
               id="own-translation"
+              disabled={saving}
               aria-label="Перевод"
               placeholder="Перевод, например волк"
               value={own.translation}
@@ -138,10 +169,20 @@ export function VocabularyPage() {
             />
             <button
               className="button-primary"
-              disabled={!own.text.trim() || !own.translation.trim()}
+              disabled={saving || !own.text.trim() || !own.translation.trim()
+                || (ownImage !== null && ownImage.size > 5 * 1024 * 1024)}
             >
               Добавить
             </button>
+            <label className="stack">
+              Картинка (необязательно, JPEG, PNG или WebP до 5 МБ)
+              <input ref={imageInput} disabled={saving}
+                type="file" accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => setOwnImage(event.target.files?.[0] ?? null)} />
+            </label>
+            {ownImage && ownImage.size > 5 * 1024 * 1024 && (
+              <p className="alert">Картинка должна быть не больше 5 МБ.</p>
+            )}
           </form>
           {message && <p className="muted">{message}</p>}
         </section>
@@ -173,12 +214,22 @@ export function VocabularyPage() {
                 {words.map(({ word, next_review_at }) => (
                   <tr key={word.id}>
                     <td>
+                      <WordImage word={word} />
                       <strong>{word.text}</strong>
                       {word.transcription && <span className="muted"> {word.transcription}</span>}
                     </td>
                     <td>{word.translation}</td>
                     <td className="nowrap">{formatNextReview(next_review_at)}</td>
                     <td className="cell-action">
+                      <label className="button-link">
+                        {word.image_url ? 'Заменить картинку' : 'Добавить картинку'}
+                        <input type="file" accept="image/jpeg,image/png,image/webp"
+                          aria-label={`Картинка для ${word.text}`}
+                          onChange={(event) => {
+                            void handleImage(word.id, event.target.files?.[0])
+                            event.target.value = ''
+                          }} />
+                      </label>
                       <button
                         className="button-link"
                         onClick={() => handleRemove(word.id)}

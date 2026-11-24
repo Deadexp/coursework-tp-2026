@@ -5,6 +5,7 @@ import secrets
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from bot.api_client import BackendClient, PracticeState
+from bot.chat_ui import ChatView
 
 RATINGS = {1: "Не помню", 3: "С трудом", 4: "Помню", 5: "Легко"}
 LEVELS = ("A1", "A2", "B1", "B2", "C1", "C2")
@@ -20,8 +21,9 @@ def buttons(rows):
 
 
 class PracticeUI:
-    def __init__(self, client: BackendClient, menu):
+    def __init__(self, client: BackendClient, menu, view: ChatView | None = None):
         self.client, self.menu = client, menu
+        self.view = view or ChatView()
         self.active: dict[int, PracticeState] = {}
         self.tickets: dict[int, str] = {}
         self.levels: dict[int, str] = {}
@@ -33,40 +35,34 @@ class PracticeUI:
 
     async def start(self, message: Message, user_id: int, mode: str) -> None:
         state = await self.client.start_practice(user_id, mode)
-        title = "📝 Мини-тест" if mode == "quiz" else "☀️ Практика дня"
-        if not state.completed:
-            await message.answer(
-                title + "\n\nСлова из твоего личного словаря. "
-                "Сервер сохраняет каждый ответ. Незавершённое занятие можно продолжить.\n"
-                "Вопросов: " + str(state.total) + ". Если слов мало, занятие короче.\n"
-                "/stop — выйти из занятия, /help — помощь.",
-                reply_markup=self.menu,
-            )
         await self.render(message, user_id, state)
 
-    async def render(self, message: Message, user_id: int, state: PracticeState) -> None:
+    async def render(
+        self, message: Message, user_id: int, state: PracticeState, prefix: str = ""
+    ) -> None:
         if state.completed:
             self.cancel_local(user_id)
             title = "☀️ Практика дня выполнена" if state.mode == "daily" else "📝 Мини-тест завершён"
-            text = (
-                title + f"\n\nКарточек пройдено: {state.cards_reviewed}.\n"
-                f"Правильных ответов: {state.correct} из {state.attempted}.\n"
-                "Самооценки карточек не считаются правильными ответами."
-            )
+            text = prefix + title + f"\n\nПравильных ответов: {state.correct} из {state.attempted}."
             if state.mode == "daily":
-                text += "\nСледующая практика — в новый день по UTC (03:00 по Москве)."
-            await message.answer(text, reply_markup=self.menu)
+                text += f"\nКарточек пройдено: {state.cards_reviewed}."
+            await self.view.show(message, keep=True, text=text, reply_markup=self.menu)
             return
         self.active[user_id] = state
         ticket = secrets.token_hex(8)
         self.tickets[user_id] = ticket
         question = state.question
         title = "📝 Мини-тест" if state.mode == "quiz" else "☀️ Практика дня"
-        text = f"{title} · {state.answered + 1} из {state.total}\n\n{question.prompt}"
+        text = prefix + f"{title} · {state.answered + 1} из {state.total}\n\n{question.prompt}"
         if question.kind == "card":
             if question.revealed:
-                await message.answer(
-                    text + "\nПеревод: " + question.translation + "\n\nКак вспомнился перевод?",
+                await self.view.show(
+                    message,
+                    keep=True,
+                    text=text
+                    + "\nПеревод: "
+                    + question.translation
+                    + "\n\nКак вспомнился перевод?",
                     reply_markup=buttons(
                         [
                             [(RATINGS[q], f"prate:{ticket}:{q}") for q in row]
@@ -75,13 +71,17 @@ class PracticeUI:
                     ),
                 )
             else:
-                await message.answer(
-                    text + "\n\nВспомни перевод.",
+                await self.view.show(
+                    message,
+                    keep=True,
+                    text=text + "\n\nВспомни перевод.",
                     reply_markup=buttons([[("Показать перевод", f"preveal:{ticket}")]]),
                 )
         elif question.kind == "choice":
-            await message.answer(
-                text,
+            await self.view.show(
+                message,
+                keep=True,
+                text=text,
                 reply_markup=buttons(
                     [
                         [(choice, f"pchoice:{ticket}:{i}")]
@@ -90,8 +90,10 @@ class PracticeUI:
                 ),
             )
         else:
-            await message.answer(
-                text + "\n\nОтправь английское слово одним сообщением. Вариантов ответа нет.",
+            await self.view.show(
+                message,
+                keep=True,
+                text=text + "\n\nОтправь английское слово одним сообщением. Вариантов ответа нет.",
                 reply_markup=self.menu,
             )
 
@@ -110,11 +112,21 @@ class PracticeUI:
             if feedback.is_correct
             else "Ответ неверный. Запомним правильное слово."
         )
-        await message.answer(
-            text + f"\n\n{feedback.word} — {feedback.translation}\n"
-            f"Следующее повторение: {feedback.next_review_at:%d.%m.%Y %H:%M} UTC (SM-2).",
+        await self.render(
+            message,
+            user_id,
+            feedback.state,
+            f"Вопрос: {state.question.prompt}\n"
+            + (
+                f"Твой ответ: {answer['answer']}\n"
+                if "answer" in answer
+                else f"Твой ответ: {state.question.choices[answer['option_index']]}\n"
+                if "option_index" in answer
+                else ""
+            )
+            + text
+            + f"\nПравильно: {feedback.word} — {feedback.translation}\n\n",
         )
-        await self.render(message, user_id, feedback.state)
 
     async def callback(self, query: CallbackQuery) -> None:
         user_id = query.from_user.id
@@ -130,8 +142,9 @@ class PracticeUI:
             self.levels.pop(user_id, None)
             await query.answer()
             level = await self.client.level(user_id, parts[2])
-            await query.message.answer(
-                f"Уровень аккаунта сохранён: {level}. На сайте он обновится после перезагрузки страницы.",
+            await self.view.show(
+                query.message,
+                f"Уровень сохранён: {level}.",
                 reply_markup=self.menu,
             )
             return
@@ -174,7 +187,9 @@ class PracticeUI:
             return False
         value = (message.text or "").strip()
         if not value or len(value) > 200:
-            await message.answer("Напиши непустое английское слово до 200 символов. /stop — выход.")
+            await self.view.notice(
+                message, "Напиши непустое английское слово до 200 символов. /stop — выход."
+            )
             return True
         if value.startswith("/"):
             return False
@@ -182,18 +197,19 @@ class PracticeUI:
         await self.submit(message, user_id, answer=value)
         return True
 
-    async def progress(self, message: Message, user_id: int) -> None:
+    async def progress(self, message: Message, user_id: int, *, keep_screen: bool = False) -> None:
         data = await self.client.progress(user_id)
-        await message.answer(
-            "📊 Мой прогресс\n\n"
-            f"Уровень: {data.level}\nСлов в словаре: {data.words}\n"
-            f"Пора повторить: {data.due}\nПовторений по текущему словарю: {data.reviews}\n"
-            f"Ответов в тестах и практике: {data.attempted}\nПравильных: {data.correct}\n"
-            f"Завершено тестов по словам: {data.quizzes_completed}\n"
-            f"Грамматика сайта и бота: {data.grammar_correct} верных из {data.grammar_attempted} ответов\n"
-            f"Завершено практик дня: {data.daily_completed}\n"
-            f"Последняя практика (UTC): {data.last_daily_date or 'ещё не выполнена'}\n\n"
-            "Данные хранятся на общем сервере. Текущее занятие продолжается.",
+        send = self.view.notice if keep_screen else self.view.show
+        await send(
+            message,
+            "📊 Статистика\n\n"
+            f"Слов в словаре: {data.words}\n"
+            f"К повторению: {data.due}\n"
+            f"Повторений слов: {data.reviews}\n\n"
+            f"Слова: {data.correct} верных ответов из {data.attempted}\n"
+            f"Грамматика: {data.grammar_correct} из {data.grammar_attempted}\n"
+            f"Тестов по словам завершено: {data.quizzes_completed}"
+            + ("\n\nЗадание остаётся выше — можно продолжить." if keep_screen else ""),
             reply_markup=self.menu,
         )
 
@@ -201,7 +217,8 @@ class PracticeUI:
         level = await self.client.level(user_id)
         ticket = secrets.token_hex(8)
         self.levels[user_id] = ticket
-        await message.answer(
+        await self.view.show(
+            message,
             f"🎚 Уровень английского\n\nТекущий уровень аккаунта: {level}. Выбери новый:",
             reply_markup=buttons(
                 [

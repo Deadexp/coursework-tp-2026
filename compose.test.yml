@@ -21,10 +21,13 @@ services:
       BOT_SERVICE_TOKEN: isolated-test-service-key-for-tests-only
       BOT_USERNAME: course_test_bot
       LLM_PROVIDER: stub
+      WORD_IMAGES_DIR: /app/word-images
       PYTHONDONTWRITEBYTECODE: "1"
     volumes:
       - ./backend:/app
       - ./bot:/bot:ro
+      - ./frontend/public/images/vocabulary:/app/word-images:ro
+      - ./frontend/public:/frontend/public:ro
     depends_on:
       test-db: { condition: service_healthy }
     command: python -B -m pytest -q -p no:cacheprovider

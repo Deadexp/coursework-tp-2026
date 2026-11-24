@@ -16,7 +16,10 @@ class WordRead(BaseModel):
     translation: str
     transcription: str | None
     example: str | None
-    image_url: str | None = Field(default=None, pattern=LOCAL_IMAGE_PATTERN)
+    image_url: str | None = Field(
+        default=None,
+        pattern=r"^(?:/images/vocabulary/[a-z0-9][a-z0-9-]*\.svg|/vocabulary/[1-9][0-9]*/image\?v=[a-f0-9]{12})$",
+    )
 
 
 class WordSearchResult(WordRead):

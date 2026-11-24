@@ -7,6 +7,7 @@ from sqlalchemy import (
     ForeignKeyConstraint,
     Index,
     Integer,
+    LargeBinary,
     SmallInteger,
     UniqueConstraint,
     func,
@@ -70,6 +71,7 @@ class UserWord(Base):
     interval_days: Mapped[int] = mapped_column(Integer, server_default="0")
     repetitions: Mapped[int] = mapped_column(Integer, server_default="0")
     next_review_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    image_data: Mapped[bytes | None] = mapped_column(LargeBinary, nullable=True)
 
 
 class WordReview(Base):

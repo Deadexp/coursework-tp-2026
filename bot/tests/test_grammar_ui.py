@@ -28,7 +28,12 @@ class GrammarUITests(unittest.IsolatedAsyncioTestCase):
             return httpx.Response(403 if not self.linked else self.status, json={})
         if request.url.path == "/grammar/topics":
             return httpx.Response(
-                200, json=[{"id": 61, "title": "Server theme", "exercises_total": 2}]
+                200,
+                json=getattr(
+                    self,
+                    "server_topics",
+                    [{"id": 61, "title": "Server theme", "exercises_total": 2}],
+                ),
             )
         body = json.loads(request.content)
         if request.url.path == "/grammar/quizzes":
@@ -83,6 +88,8 @@ class GrammarUITests(unittest.IsolatedAsyncioTestCase):
 
     async def begin(self, user=SENDER, mixed=False):
         themes = await self.send("/quiz", user_id=user)
+        if not mixed:
+            themes = await self.click(themes, self.button(themes, "gsite"), user_id=user)
         return await self.click(
             themes, self.button(themes, "gmix" if mixed else "gtopic"), user_id=user
         )
@@ -90,11 +97,12 @@ class GrammarUITests(unittest.IsolatedAsyncioTestCase):
     async def test_dynamic_topics_mixed_and_rules(self):
         themes = await self.send("📝 Мини-тест")
         labels = [b.text for row in themes.reply_markup.inline_keyboard for b in row]
-        self.assertIn("Server theme", labels)
+        self.assertNotIn("Server theme", labels)
         self.assertIn("Смешанный тест", labels)
         question = await self.click(themes, self.button(themes, "gmix"))
         self.assertIn("Вопрос 1 из 2", question.text)
-        self.assertTrue(any("В тесте 2" in m.text for m in self.session.sent))
+        self.assertIn("Выбери ответ", question.text)
+        self.assertFalse(any("В тесте 2" in m.text for m in self.session.sent))
         self.assertNotIn("Правильный ответ", question.text)
         self.assertEqual(self.button(question, "gchoice").split(":")[-1], "0")
         self.assertNotIn("synthetic", self.button(question, "gchoice"))
@@ -195,8 +203,66 @@ class GrammarUITests(unittest.IsolatedAsyncioTestCase):
 
     async def test_course_disappeared_has_specific_error_without_word_dictionary_hint(self):
         themes = await self.send("/quiz")
+        themes = await self.click(themes, self.button(themes, "gsite"))
         self.status = 412
         reply = await self.click(themes, self.button(themes, "gtopic"))
         self.assertIn("Грамматические задания", reply.text)
         self.assertNotIn("Личный словарь пуст", reply.text)
         self.assertEqual(len(self.answers()), 0)
+
+    async def test_root_has_four_modes_and_site_submenu_has_all_server_topics(self):
+        self.server_topics = [
+            {"id": i, "title": f"Course topic {i}", "exercises_total": 6} for i in range(1, 16)
+        ]
+        menu = await self.send("📝 Мини-тест")
+        labels = [b.text for row in menu.reply_markup.inline_keyboard for b in row]
+        self.assertEqual(
+            labels[:4],
+            [
+                "Смешанный тест",
+                "Тест по моим словам",
+                "Сложные слова",
+                "Тесты с сайта",
+            ],
+        )
+        self.assertFalse(any(r.url.path == "/grammar/topics" for r in self.calls))
+        topics = await self.click(menu, self.button(menu, "gsite"))
+        labels = [b.text for row in topics.reply_markup.inline_keyboard for b in row]
+        self.assertEqual(labels[:-1], [t["title"] for t in self.server_topics])
+        self.assertEqual(labels[-1], "← Мини-тест")
+        last = next(
+            b
+            for row in topics.reply_markup.inline_keyboard
+            for b in row
+            if b.text == "Course topic 15"
+        )
+        question = await self.click(topics, last.callback_data)
+        self.assertIn("Вопрос 1 из 2", question.text)
+        request = next(r for r in self.calls if r.url.path == "/grammar/quizzes")
+        self.assertEqual(json.loads(request.content)["topic_id"], 15)
+
+    async def test_site_submenu_back_and_old_or_foreign_buttons(self):
+        menu = await self.send("/quiz")
+        site = self.button(menu, "gsite")
+        calls = len(self.calls)
+        await self.click(menu, site, user_id=SENDER + 1)
+        self.assertEqual(len(self.calls), calls)
+        topics = await self.click(menu, site)
+        back = await self.click(topics, self.button(topics, "gback"))
+        self.assertIn(
+            "Тесты с сайта", [b.text for row in back.reply_markup.inline_keyboard for b in row]
+        )
+        calls = len(self.calls)
+        await self.click(topics, self.button(topics, "gtopic"))
+        await self.click(menu, site)
+        self.assertEqual(len(self.calls), calls)
+        self.assertEqual(len(self.answers()), 0)
+
+    async def test_empty_site_topics_keeps_other_modes_available(self):
+        self.server_topics = []
+        menu = await self.send("/quiz")
+        topics = await self.click(menu, self.button(menu, "gsite"))
+        self.assertIn("пока не загружены", topics.text)
+        menu = await self.click(topics, self.button(topics, "gback"))
+        await self.click(menu, self.button(menu, "gwords"))
+        self.assertTrue(any(r.url.path == "/practice/sessions" for r in self.calls))
