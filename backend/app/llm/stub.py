@@ -12,5 +12,5 @@ class StubLLM:
     ) -> T:
         raise LLMError(
             "Языковая модель не подключена: "
-            "укажите LLM_PROVIDER=anthropic и ANTHROPIC_API_KEY в .env"
+            "укажите LLM_PROVIDER=openrouter и OPENROUTER_API_KEY в .env"
         )

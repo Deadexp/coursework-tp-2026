@@ -12,7 +12,9 @@ services:
   api:
     build: ./backend
     env_file: .env
-    environment: { WORD_IMAGES_DIR: "/app/word-images" }
+    environment:
+      WORD_IMAGES_DIR: "/app/word-images"
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
     ports: ["8000:8000"]
     volumes: [./backend:/app, "./frontend/public/images/vocabulary:/app/word-images:ro"]
     depends_on:
