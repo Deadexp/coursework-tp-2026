@@ -51,6 +51,37 @@ class LinkedUser(BaseModel):
     display_name: str
 
 
+class DialogScenario(BaseModel):
+    code: str
+    title: str
+
+
+class DialogCorrection(BaseModel):
+    fragment: str
+    correction: str
+    explanation: str | None
+
+
+class DialogMessage(BaseModel):
+    content: str
+    corrections: list[DialogCorrection]
+
+
+class Dialog(BaseModel):
+    id: int
+    messages: list[DialogMessage] = Field(min_length=1)
+    summary: str | None
+
+
+class DialogExchange(BaseModel):
+    reply: DialogMessage
+    user_message: DialogMessage
+
+
+# The backend may retry a model request with a 60-second timeout.
+DIALOG_TIMEOUT = httpx.Timeout(210, connect=10)
+
+
 class ReviewResult(BaseModel):
     next_review_at: datetime
     interval_days: int
@@ -192,6 +223,34 @@ class BackendClient:
     async def me(self, sender: int) -> str:
         result = await self._request("GET", "/telegram/me", sender)
         return self._display_name(result)
+
+    async def dialog_scenarios(self, sender: int) -> list[DialogScenario]:
+        result = await self._request("GET", "/dialogs/scenarios", sender)
+        if not isinstance(result, list):
+            raise BackendError(502)
+        return [self._validated(DialogScenario, item) for item in result]
+
+    async def start_dialog(self, sender: int, scenario: str) -> Dialog:
+        result = await self._request(
+            "POST", "/dialogs", sender, json={"scenario": scenario}, timeout=DIALOG_TIMEOUT
+        )
+        return self._validated(Dialog, result)
+
+    async def dialog_message(self, sender: int, dialog_id: int, text: str) -> DialogExchange:
+        result = await self._request(
+            "POST",
+            f"/dialogs/{dialog_id}/messages",
+            sender,
+            json={"content": text},
+            timeout=DIALOG_TIMEOUT,
+        )
+        return self._validated(DialogExchange, result)
+
+    async def finish_dialog(self, sender: int, dialog_id: int) -> Dialog:
+        result = await self._request(
+            "POST", f"/dialogs/{dialog_id}/finish", sender, timeout=DIALOG_TIMEOUT
+        )
+        return self._validated(Dialog, result)
 
     async def reminder_settings(self, sender: int, **changes) -> ReminderSettings:
         result = await self._request(

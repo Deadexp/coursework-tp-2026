@@ -2,6 +2,7 @@
 
 import re
 import secrets
+import textwrap
 from dataclasses import dataclass, field
 from io import BytesIO
 
@@ -76,6 +77,7 @@ class Flow:
     position: int = 0
     section: str = "dictionary"
     image: bytes | None = None
+    dialog_id: int | None = None
 
 
 def make_connected_router(client: BackendClient, website_url: str) -> Router:
@@ -153,6 +155,40 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
             ),
         )
         await view.show(message, text, reply_markup=MENU)
+
+    async def dialog_error(message: Message, user_id: int, exc: BackendError) -> None:
+        if exc.status in (401, 403):
+            await error(message, user_id, exc)
+            return
+        if exc.status == 404:
+            flows.pop(user_id, None)
+            await view.show(
+                message, "Разговор не найден. Выбери сценарий через /talk.", reply_markup=MENU
+            )
+            return
+        text = {
+            409: "Продолжить этот диалог уже нельзя. Нажми /stop, чтобы получить итог.",
+            422: "Эмма не смогла ответить на этот запрос. Попробуй переформулировать.",
+        }.get(exc.status, "Эмма временно недоступна. Проверь историю на сайте и попробуй позже.")
+        await view.notice(message, text)
+
+    async def show_dialog_text(
+        message: Message, text: str, markup: InlineKeyboardMarkup | ReplyKeyboardMarkup
+    ) -> None:
+        # Even long feedback fits Telegram's 4096-character limit, including emoji.
+        parts = textwrap.wrap(text, width=2000, replace_whitespace=False, expand_tabs=False)
+        for index, part in enumerate(parts):
+            await view.show(
+                message, part, keep=True, reply_markup=markup if index == len(parts) - 1 else None
+            )
+
+    def finish_button(flow: Flow) -> InlineKeyboardMarkup:
+        return keyboard([[("Завершить и получить отзыв", f"talkend:{flow.ticket}")]])
+
+    async def finish_talk(message: Message, user_id: int, dialog_id: int) -> None:
+        result = await client.finish_dialog(user_id, dialog_id)
+        flows.pop(user_id, None)
+        await show_dialog_text(message, result.summary or "Разговор завершён.", MENU)
 
     async def home(message: Message, user_id: int, prefix: str = "") -> None:
         flows.pop(user_id, None)
@@ -241,6 +277,7 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
                 "Статистика — количество слов и результаты ответов.\n\n"
                 "/start — меню · /stop — выйти из задания\n"
                 "/link — подключить аккаунт сайта\n"
+                "/talk — поговорить с Эммой и получить исправления\n"
                 "/reminders — настроить напоминания\n\n"
                 "Слова и результаты общие с сайтом."
                 + ("\n\nЗадание остаётся выше — можно продолжить." if studying(user_id) else ""),
@@ -250,6 +287,19 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
         if name in ("progress", "stats"):
             await practice.progress(message, user_id, keep_screen=studying(user_id))
             return
+        current = flows.get(user_id)
+        if current and current.dialog_id is not None:
+            if name == "stop":
+                try:
+                    await finish_talk(message, user_id, current.dialog_id)
+                except BackendError as exc:
+                    await dialog_error(message, user_id, exc)
+                return
+            if name == "talk":
+                await view.notice(
+                    message, "Разговор уже открыт. Напиши Эмме или нажми /stop для отзыва."
+                )
+                return
         flows.pop(user_id, None)
         practice.cancel_local(user_id)
         grammar.cancel_local(user_id)
@@ -297,11 +347,21 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
                 "reveal", words=words, section="quiz" if name == "difficult" else "dictionary"
             )
             await show_card(message, user_id)
-        else:
+        elif name == "talk":
+            try:
+                scenarios = await client.dialog_scenarios(user_id)
+            except BackendError as exc:
+                await dialog_error(message, user_id, exc)
+                return
+            flow = Flow("talk_pick")
+            flows[user_id] = flow
             await view.show(
                 message,
-                "Разговор с LLM пока недоступен. Попробуй мини-тест или карточки в словаре.",
-                reply_markup=MENU,
+                "💬 Разговор с Эммой\n\nВыбери сценарий и пиши по-английски. "
+                "Эмма ответит и объяснит ошибки.",
+                reply_markup=keyboard(
+                    [[(s.title, f"talkstart:{flow.ticket}:{s.code}")] for s in scenarios]
+                ),
             )
 
     @router.message(CommandStart())
@@ -410,6 +470,8 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
             or (stage == "reveal" and name == "reveal")
             or (stage == "rate" and name == "rate")
             or (stage in ("reveal", "rate") and name == "back")
+            or (stage == "talk_pick" and name == "talkstart" and len(parts) == 3)
+            or (stage == "talk" and name == "talkend" and flow.dialog_id is not None)
         )
         if not allowed:
             await query.answer("Используй последнее задание или меню.")
@@ -417,7 +479,18 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
         flow.stage = "busy"
         await query.answer()
         try:
-            if name == "page" and len(parts) == 3 and parts[2].isdigit():
+            if name == "talkstart":
+                dialog = await client.start_dialog(user_id, parts[2])
+                flow = Flow("talk", dialog_id=dialog.id)
+                flows[user_id] = flow
+                await show_dialog_text(
+                    message=query.message,
+                    text="Эмма: " + dialog.messages[0].content,
+                    markup=finish_button(flow),
+                )
+            elif name == "talkend":
+                await finish_talk(query.message, user_id, flow.dialog_id)
+            elif name == "page" and len(parts) == 3 and parts[2].isdigit():
                 await dictionary(query.message, user_id, min(int(parts[2]), 100000))
             elif name == "cancel":
                 await dictionary(query.message, user_id, flow.page)
@@ -515,7 +588,11 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
             else:
                 flow.stage = stage
         except BackendError as exc:
-            await error(query.message, user_id, exc)
+            if name in ("talkstart", "talkend"):
+                flow.stage = stage
+                await dialog_error(query.message, user_id, exc)
+            else:
+                await error(query.message, user_id, exc)
 
     @router.message()
     async def text(message: Message) -> None:
@@ -561,6 +638,27 @@ def make_connected_router(client: BackendClient, website_url: str) -> Router:
             await view.notice(
                 message, "Команда не распознана. /help — помощь; /stop — выйти из задания."
             )
+            return
+        if flow and flow.stage == "talk" and flow.dialog_id is not None:
+            if not value or len(value) > 1000:
+                await view.notice(message, "Напиши Эмме текст от 1 до 1000 символов.")
+                return
+            try:
+                turn = await client.dialog_message(user_id, flow.dialog_id, value)
+            except BackendError as exc:
+                await dialog_error(message, user_id, exc)
+                return
+            lines = ["Эмма: " + turn.reply.content]
+            if turn.user_message.corrections:
+                lines.append("\nИсправления")
+                for fix in turn.user_message.corrections:
+                    lines.append(f"• {fix.fragment} → {fix.correction}")
+                    if fix.explanation:
+                        lines.append(fix.explanation)
+            await show_dialog_text(message, "\n".join(lines), finish_button(flow))
+            return
+        if flow and flow.stage == "talk_pick":
+            await view.notice(message, "Выбери сценарий кнопкой выше.")
             return
         try:
             if await reminders.text(message, user_id):

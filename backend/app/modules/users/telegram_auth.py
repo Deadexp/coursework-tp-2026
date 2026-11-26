@@ -44,12 +44,12 @@ class VocabularyIdentity:
     is_bot: bool = False
 
 
-async def get_vocabulary_identity(
+async def get_shared_user(
     session: SessionDep,
     bearer: Annotated[str | None, Depends(optional_bearer)],
     telegram_id: Annotated[str | None, Header(alias="X-Telegram-ID")] = None,
     service_token: Annotated[str | None, Header(alias="X-Service-Token")] = None,
-) -> VocabularyIdentity:
+) -> User:
     if telegram_id is not None or service_token is not None:
         require_bot_service(service_token)
         if bearer is not None:
@@ -65,12 +65,22 @@ async def get_vocabulary_identity(
         user = await session.scalar(select(User).where(User.telegram_id == int(telegram_id)))
         if user is None:
             raise HTTPException(403, "Telegram account is not linked")
-        return VocabularyIdentity(user.id, is_bot=True)
+        return user
     user_id = decode_access_token(bearer) if bearer else None
     user = await session.get(User, user_id) if user_id is not None else None
     if user is None:
         raise HTTPException(401, "Invalid or expired token", headers={"WWW-Authenticate": "Bearer"})
-    return VocabularyIdentity(user.id)
+    return user
+
+
+SharedUser = Annotated[User, Depends(get_shared_user)]
+
+
+async def get_vocabulary_identity(
+    user: SharedUser,
+    telegram_id: Annotated[str | None, Header(alias="X-Telegram-ID")] = None,
+) -> VocabularyIdentity:
+    return VocabularyIdentity(user.id, is_bot=telegram_id is not None)
 
 
 VocabularyUser = Annotated[VocabularyIdentity, Depends(get_vocabulary_identity)]
