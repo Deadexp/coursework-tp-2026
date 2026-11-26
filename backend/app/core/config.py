@@ -10,11 +10,10 @@ class Settings(BaseSettings):
     bot_username: str = ""  # Public BotFather username, without @.
     jwt_secret: str = "dev-only-secret-change-me-in-production"
     jwt_expire_minutes: int = 60 * 24 * 7
-    llm_provider: str = "stub"  # stub | anthropic
-    llm_model: str = "claude-sonnet-5-5"
-    llm_effort: str = "low"  # low | medium | high — глубина размышлений модели
-    anthropic_api_key: str = ""
-    anthropic_workspace_id: str = ""  # нужен, только если ключ не привязан к workspace
+    llm_provider: str = "openrouter"
+    llm_model: str = "deepseek/deepseek-v4.1-flash-1017"
+    llm_effort: str = "low"  # Уровень рассуждений для отзыва и плана занятия
+    openrouter_api_key: str = ""
 
     @field_validator("llm_provider", "llm_model", "llm_effort", mode="before")
     @classmethod

@@ -191,11 +191,11 @@ async def test_without_api_key_ai_endpoints_answer_503(
     from app.llm import get_llm
 
     get_llm.cache_clear()
-    monkeypatch.setattr(settings, "llm_provider", "anthropic")
-    monkeypatch.setattr(settings, "anthropic_api_key", "")
+    monkeypatch.setattr(settings, "llm_provider", "openrouter")
+    monkeypatch.setattr(settings, "openrouter_api_key", "")
 
     response = await client.post("/dialogs", json={"scenario": "cafe"}, headers=auth_headers)
 
     assert response.status_code == 503
-    assert "ANTHROPIC_API_KEY" in response.json()["detail"]
+    assert "OPENROUTER_API_KEY" in response.json()["detail"]
     get_llm.cache_clear()

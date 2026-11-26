@@ -1,125 +1,98 @@
-from types import SimpleNamespace
+import json
 
+import httpx2
 import pytest
-from pydantic import BaseModel
 
 from app.core.config import Settings, settings
 from app.llm import LLMError, LLMRefusalError, Message, get_llm
-from app.llm.anthropic_client import AnthropicLLM
+from app.llm.openrouter_client import OpenRouterLLM
 from app.llm.stub import StubLLM
-
-
-@pytest.fixture(autouse=True)
-def fresh_llm():
-    get_llm.cache_clear()
-    yield
-    get_llm.cache_clear()
-
-
-def test_empty_env_values_fall_back_to_defaults(monkeypatch) -> None:
-    monkeypatch.setenv("LLM_MODEL", "")
-    monkeypatch.setenv("LLM_EFFORT", "")
-    s = Settings(_env_file=None)
-    assert (s.llm_model, s.llm_effort) == ("claude-sonnet-5-5", "low")
+from app.modules.dialogs.schemas import SpeakerTurn
 
 
 def test_provider_selection(monkeypatch) -> None:
-    monkeypatch.setattr(settings, "llm_provider", "stub")
-    assert isinstance(get_llm(), StubLLM)
+    for name in ("LLM_MODEL", "LLM_EFFORT", "LLM_PROVIDER"):
+        monkeypatch.setenv(name, "")
+    defaults = Settings(_env_file=None)
+    assert defaults.llm_model == "deepseek/deepseek-v4.1-flash-1017"
+    assert defaults.llm_effort == "low"
+    assert defaults.llm_provider == "openrouter"
 
     get_llm.cache_clear()
-    monkeypatch.setattr(settings, "llm_provider", "anthropic")
-    monkeypatch.setattr(settings, "anthropic_api_key", "")
-    with pytest.raises(LLMError, match="ANTHROPIC_API_KEY"):
+    monkeypatch.setattr(settings, "llm_provider", "openrouter")
+    monkeypatch.setattr(settings, "openrouter_api_key", "")
+    with pytest.raises(LLMError, match="OPENROUTER_API_KEY"):
         get_llm()
-
-    monkeypatch.setattr(settings, "anthropic_api_key", "sk-ant-test")
-    assert isinstance(get_llm(), AnthropicLLM)
-
-
-class FakeMessages:
-    """Подменяет client.beta.messages: запоминает запрос и возвращает заданный ответ."""
-
-    def __init__(self, response):
-        self.response = response
-        self.request = None
-
-    async def create(self, **kwargs):
-        self.request = kwargs
-        return self.response
-
-    async def parse(self, **kwargs):
-        self.request = kwargs
-        return self.response
+    monkeypatch.setattr(settings, "openrouter_api_key", "test-key")
+    assert isinstance(get_llm(), OpenRouterLLM)
+    get_llm.cache_clear()
+    monkeypatch.setattr(settings, "llm_provider", "stub")
+    assert isinstance(get_llm(), StubLLM)
+    get_llm.cache_clear()
 
 
-def llm_with(response) -> tuple[AnthropicLLM, FakeMessages]:
-    llm = AnthropicLLM(api_key="sk-ant-test", model="claude-sonnet-5-5", effort="low")
-    fake = FakeMessages(response)
-    llm._client = SimpleNamespace(beta=SimpleNamespace(messages=fake))
-    return llm, fake
+@pytest.fixture
+def openrouter(monkeypatch):
+    def configure(content: str, *, finish: str = "stop", status: int = 200):
+        requests = []
+
+        async def send(client, request, **kwargs):
+            requests.append(request)
+            message = {"role": "assistant", "content": content}
+            body = {
+                "id": "gen-test",
+                "object": "chat.completion",
+                "created": 1,
+                "model": "test-model",
+                "choices": [{"index": 0, "message": message, "finish_reason": finish}],
+            }
+            if status != 200:
+                body = {"error": {"code": status, "message": "request failed"}}
+            return httpx2.Response(status, json=body, request=request)
+
+        monkeypatch.setattr(httpx2.AsyncClient, "send", send)
+        return OpenRouterLLM(api_key="test-key", model="test-model", effort="low"), requests
+
+    return configure
 
 
-def response(stop_reason="end_turn", content=(), parsed=None):
-    return SimpleNamespace(
-        stop_reason=stop_reason,
-        stop_details=SimpleNamespace(category="cyber") if stop_reason == "refusal" else None,
-        content=list(content),
-        parsed_output=parsed,
-        _request_id="req_test",
-    )
+async def test_chat_uses_openrouter(openrouter) -> None:
+    llm, requests = openrouter("Hello!")
+    assert await llm.chat("Tutor", [Message("user", "Hi")]) == "Hello!"
+    (request,) = requests
+    assert str(request.url) == "https://openrouter.ai/api/v1/chat/completions"
+    assert request.headers["authorization"] == "Bearer test-key"
+    body = json.loads(request.content)
+    assert body["model"] == "test-model"
+    assert body["messages"] == [
+        {"role": "system", "content": "Tutor"},
+        {"role": "user", "content": "Hi"},
+    ]
+    assert body["reasoning"] == {"effort": "low"}
 
 
-async def test_chat_sends_model_effort_fallback_and_joins_text() -> None:
-    text = [SimpleNamespace(type="thinking"), SimpleNamespace(type="text", text="Hello!")]
-    llm, fake = llm_with(response(content=text))
-
-    reply = await llm.chat("system prompt", [Message("user", "Hi")])
-
-    assert reply == "Hello!"
-    assert fake.request["model"] == "claude-sonnet-5-5"
-    assert fake.request["output_config"] == {"effort": "low"}
-    assert fake.request["fallbacks"] == "default"
-    assert fake.request["betas"] == ["server-side-fallback-2026-07-01"]
-    assert fake.request["messages"] == [{"role": "user", "content": "Hi"}]
-
-
-async def test_parse_returns_validated_model() -> None:
-    class Fix(BaseModel):
-        corrected: str
-
-    llm, fake = llm_with(response(parsed=Fix(corrected="She doesn't")))
-
-    result = await llm.parse("sys", [Message("user", "She don't")], Fix)
-
-    assert result.corrected == "She doesn't"
-    assert fake.request["output_format"] is Fix
+async def test_parse_dialog_requests_nested_schema(openrouter) -> None:
+    llm, requests = openrouter('{"corrections": [], "reply": "Hi!"}')
+    result = await llm.parse("Tutor", [Message("user", "Hi")], SpeakerTurn, fast=True)
+    assert result == SpeakerTurn(corrections=[], reply="Hi!")
+    body = json.loads(requests[0].content)
+    assert body["reasoning"] == {"effort": "none"}
+    assert body["provider"]["require_parameters"]
+    assert body["response_format"]["type"] == "json_schema"
+    schema = body["response_format"]["json_schema"]
+    assert schema["strict"]
+    assert schema["schema"]["$defs"]["SpeakerCorrection"]["additionalProperties"] is False
 
 
-async def test_refusal_becomes_llm_refusal_error() -> None:
-    llm, _ = llm_with(response(stop_reason="refusal"))
-
-    with pytest.raises(LLMRefusalError):
-        await llm.chat("sys", [Message("user", "...")])
-
-
-def test_workspace_header_is_sent_only_when_configured() -> None:
-    plain = AnthropicLLM(api_key="sk-ant-test", model="m", effort="low")
-    scoped = AnthropicLLM(api_key="sk-ant-test", model="m", effort="low", workspace_id="wrkspc_1")
-
-    assert "anthropic-workspace-id" not in plain._client.default_headers
-    assert scoped._client.default_headers["anthropic-workspace-id"] == "wrkspc_1"
-
-
-async def test_fast_mode_disables_thinking_only_on_sonnet_5_5() -> None:
-    llm, fake = llm_with(response(content=[SimpleNamespace(type="text", text="ok")]))
-    await llm.chat("sys", [Message("user", "Hi")], fast=True)
-    assert fake.request["thinking"] == {"type": "between_tools"}
-
-    await llm.chat("sys", [Message("user", "Hi")])
-    assert "thinking" not in fake.request
-
-    other, other_fake = llm_with(response(content=[SimpleNamespace(type="text", text="ok")]))
-    other._model = "claude-opus-5-5"
-    await other.chat("sys", [Message("user", "Hi")], fast=True)
-    assert "thinking" not in other_fake.request
+@pytest.mark.parametrize(
+    ("content", "finish", "status", "error", "match"),
+    [
+        ("{}", "stop", 200, LLMError, "схеме"),
+        ("", "content_filter", 200, LLMRefusalError, "отказалась"),
+        ("", "stop", 402, LLMError, "кредитов"),
+    ],
+)
+async def test_provider_errors(openrouter, content, finish, status, error, match) -> None:
+    llm, _ = openrouter(content, finish=finish, status=status)
+    with pytest.raises(error, match=match):
+        await llm.parse("Tutor", [Message("user", "Hi")], SpeakerTurn)

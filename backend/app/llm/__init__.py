@@ -13,16 +13,15 @@ def get_llm() -> LLMClient:
     """Единая точка выбора провайдера. Новый провайдер = новый класс + ветка здесь."""
     if settings.llm_provider == "stub":
         return StubLLM()
-    if settings.llm_provider == "anthropic":
-        if not settings.anthropic_api_key:
-            raise LLMError("LLM_PROVIDER=anthropic, но ANTHROPIC_API_KEY не задан в .env")
-        from app.llm.anthropic_client import AnthropicLLM
+    if settings.llm_provider == "openrouter":
+        if not settings.openrouter_api_key.strip():
+            raise LLMError("Для подключения OpenRouter задайте OPENROUTER_API_KEY в .env")
+        from app.llm.openrouter_client import OpenRouterLLM
 
-        return AnthropicLLM(
-            api_key=settings.anthropic_api_key,
+        return OpenRouterLLM(
+            api_key=settings.openrouter_api_key.strip(),
             model=settings.llm_model,
             effort=settings.llm_effort,
-            workspace_id=settings.anthropic_workspace_id,
         )
     raise LLMError(f"Неизвестный LLM_PROVIDER: {settings.llm_provider}")
 
