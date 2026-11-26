@@ -12,7 +12,7 @@ from app.modules.dialogs.schemas import (
     MessageCreate,
     ScenarioRead,
 )
-from app.modules.users.deps import CurrentUser
+from app.modules.users.telegram_auth import SharedUser
 
 router = APIRouter(prefix="/dialogs", tags=["dialogs"])
 
@@ -20,7 +20,7 @@ NOT_FOUND = HTTPException(status.HTTP_404_NOT_FOUND, "Dialog not found")
 
 
 @router.get("/scenarios")
-async def list_scenarios(_: CurrentUser) -> list[ScenarioRead]:
+async def list_scenarios(_: SharedUser) -> list[ScenarioRead]:
     return [
         ScenarioRead(code=s.code, title=s.title, description=s.description)
         for s in SCENARIOS.values()
@@ -28,13 +28,13 @@ async def list_scenarios(_: CurrentUser) -> list[ScenarioRead]:
 
 
 @router.get("")
-async def list_dialogs(user: CurrentUser, session: SessionDep) -> list[DialogSummaryRead]:
+async def list_dialogs(user: SharedUser, session: SessionDep) -> list[DialogSummaryRead]:
     return await service.list_dialogs(session, user.id)
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_dialog(
-    data: DialogCreate, user: CurrentUser, session: SessionDep, llm: LLMDep
+    data: DialogCreate, user: SharedUser, session: SessionDep, llm: LLMDep
 ) -> DialogRead:
     """Начинает разговор: собеседник здоровается и открывает сценарий."""
     try:
@@ -44,7 +44,7 @@ async def create_dialog(
 
 
 @router.get("/{dialog_id}")
-async def get_dialog(dialog_id: int, user: CurrentUser, session: SessionDep) -> DialogRead:
+async def get_dialog(dialog_id: int, user: SharedUser, session: SessionDep) -> DialogRead:
     dialog = await service.get_dialog(session, user.id, dialog_id)
     if dialog is None:
         raise NOT_FOUND
@@ -53,7 +53,7 @@ async def get_dialog(dialog_id: int, user: CurrentUser, session: SessionDep) -> 
 
 @router.post("/{dialog_id}/messages", status_code=status.HTTP_201_CREATED)
 async def send_message(
-    dialog_id: int, data: MessageCreate, user: CurrentUser, session: SessionDep, llm: LLMDep
+    dialog_id: int, data: MessageCreate, user: SharedUser, session: SessionDep, llm: LLMDep
 ) -> ExchangeResult:
     """Реплика ученика: ответ собеседника и исправления ошибок (они попадают в mistakes)."""
     try:
@@ -71,7 +71,7 @@ async def send_message(
 
 @router.post("/{dialog_id}/finish")
 async def finish_dialog(
-    dialog_id: int, user: CurrentUser, session: SessionDep, llm: LLMDep
+    dialog_id: int, user: SharedUser, session: SessionDep, llm: LLMDep
 ) -> DialogRead:
     """Завершает разговор и возвращает отзыв наставника."""
     dialog = await service.finish_dialog(session, llm, user, dialog_id)

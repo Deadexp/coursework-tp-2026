@@ -35,7 +35,7 @@ class PolishedUITests(unittest.IsolatedAsyncioTestCase):
             if m.chat.id == user_id and (user_id, m.message_id) not in self.session.deleted
         ]
 
-    async def test_six_main_buttons_and_five_published_commands(self):
+    async def test_main_buttons_and_published_commands(self):
         self.assertEqual(
             [[b.text for b in row] for row in MENU.keyboard],
             [
@@ -47,7 +47,7 @@ class PolishedUITests(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(
             [command for command, _ in CONNECTED_COMMANDS],
-            ["start", "dictionary", "quiz", "stats", "help"],
+            ["start", "dictionary", "quiz", "talk", "stats", "help"],
         )
         home = await self.send("/start")
         self.assertNotIn("подключённый режим", home.text)
@@ -61,10 +61,9 @@ class PolishedUITests(unittest.IsolatedAsyncioTestCase):
         help_message = await self.send("❓ Помощь")
         self.assertIn("❓ Помощь", help_message.text)
         self.assertNotIn((SENDER, quiz.message_id), self.session.deleted)
-        calls_before_talk = len(self.calls)
         talk = await self.send("💬 Разговор на английском")
-        self.assertIn("Разговор с LLM пока недоступен", talk.text)
-        self.assertEqual(len(self.calls), calls_before_talk)
+        self.assertIn("Выбери сценарий", talk.text)
+        self.assertEqual(self.calls[-1].url.path, "/dialogs/scenarios")
         home = await self.send("🏠 Главное меню")
         self.assertIn("Привет, Learner!", home.text)
         self.assertEqual(len(self.visible()), 1)

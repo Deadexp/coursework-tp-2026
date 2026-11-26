@@ -42,6 +42,23 @@ async def connect(client, headers, sender=TELEGRAM_ID):
     assert (await redeem(client, await new_code(client, headers), sender)).status_code == 200
 
 
+async def test_dialog_is_shared_only_with_its_linked_owner(client, auth_headers, fake_llm):
+    assert (await client.get("/dialogs/scenarios", headers=bot_headers())).status_code == 403
+    await connect(client, auth_headers)
+    result = await client.post("/dialogs", headers=bot_headers(), json={"scenario": "cafe"})
+    assert result.status_code == 201
+    path = f"/dialogs/{result.json()['id']}"
+    assert (await client.get(path, headers=auth_headers)).json() == result.json()
+    other = TELEGRAM_ID + 1
+    await connect(client, await other_user(client), other)
+    assert (await client.get(path, headers=bot_headers(other))).status_code == 404
+    forbidden = await client.post(
+        path + "/messages", headers=bot_headers(other), json={"content": "Hi"}
+    )
+    assert forbidden.status_code == 404
+    assert (await client.post(path + "/finish", headers=bot_headers(other))).status_code == 404
+
+
 async def other_user(client):
     await client.post(
         "/auth/register",

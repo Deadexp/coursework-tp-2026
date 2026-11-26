@@ -110,6 +110,32 @@ class ConnectedTests(unittest.IsolatedAsyncioTestCase):
         if not self.linked:
             return httpx.Response(403, json={})
 
+        if path == "/dialogs/scenarios":
+            return httpx.Response(200, json=[{"code": "cafe", "title": "В кафе"}])
+        if path.startswith("/dialogs"):
+            reply = {"content": "What would you like?", "corrections": []}
+            if path == "/dialogs/7/messages":
+                return httpx.Response(
+                    201,
+                    json={
+                        "reply": reply,
+                        "user_message": {
+                            "content": "two cup",
+                            "corrections": [
+                                {
+                                    "fragment": "two cup",
+                                    "correction": "two cups",
+                                    "explanation": "Нужно -s.",
+                                }
+                            ],
+                        },
+                    },
+                )
+            if path in ("/dialogs", "/dialogs/7/finish"):
+                return httpx.Response(
+                    200, json={"id": 7, "messages": [reply], "summary": "Отлично!"}
+                )
+
         if path == "/practice/level":
             if request.method == "PATCH":
                 self.level = json.loads(request.content)["level"]
@@ -320,10 +346,27 @@ class ConnectedTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("уже существует", reply.text)
         self.assertNotIn("private", reply.text)
 
-    async def test_talk_is_explicitly_unavailable(self):
-        reply = await self.send("/talk")
-        self.assertIn("LLM", reply.text)
-        self.assertEqual(self.calls, [])
+    async def test_talk_keeps_replies_corrections_and_finishes_once(self):
+        menu = await self.send("/talk")
+        choose = self.button(menu, "talkstart")
+        opening = await self.click(menu, choose)
+        self.assertIn("What would you like?", opening.text)
+        self.assertEqual(json.loads(self.calls[-1].content), {"scenario": "cafe"})
+        await self.click(menu, choose)
+        self.assertEqual(sum(r.url.path == "/dialogs" for r in self.calls), 1)
+        self.status = 503
+        self.assertIn("временно недоступна", (await self.send("two cup")).text)
+        self.status = 200
+        reply = await self.send("two cup")
+        self.assertIn("two cup → two cups", reply.text)
+        self.assertIn("Нужно -s.", reply.text)
+        self.assertEqual(json.loads(self.calls[-1].content), {"content": "two cup"})
+        await self.send("/help")
+        self.assertEqual((await self.send("/stop")).text, "Отлично!")
+        await self.click(reply, self.button(reply, "talkend"))
+        self.assertEqual(sum(r.url.path.endswith("/finish") for r in self.calls), 1)
+        self.assertTrue(all(r.headers["X-Telegram-ID"] == str(SENDER) for r in self.calls))
+        self.assertNotIn((SENDER, reply.message_id), self.session.deleted)
 
     async def test_groups_are_ignored(self):
         await self.send("/dictionary", chat_type="group")

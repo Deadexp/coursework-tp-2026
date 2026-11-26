@@ -107,7 +107,7 @@ async def send_message(
     session: AsyncSession, llm: LLMClient, user: User, dialog_id: int, content: str
 ) -> ExchangeResult | None:
     """Реплика ученика → ответ собеседника + найденные ошибки (записываются в mistakes)."""
-    dialog = await _owned(session, user.id, dialog_id)
+    dialog = await _owned(session, user.id, dialog_id, for_update=True)
     if dialog is None:
         return None
     if dialog.ended_at is not None:
@@ -168,7 +168,7 @@ async def finish_dialog(
     session: AsyncSession, llm: LLMClient, user: User, dialog_id: int
 ) -> DialogRead | None:
     """Завершает диалог и сохраняет отзыв наставника."""
-    dialog = await _owned(session, user.id, dialog_id)
+    dialog = await _owned(session, user.id, dialog_id, for_update=True)
     if dialog is None:
         return None
     if dialog.ended_at is None:
@@ -197,10 +197,14 @@ def _codes(error_types: list[ErrorType]) -> list[tuple[str, str]]:
     return [(et.code, et.name) for et in error_types]
 
 
-async def _owned(session: AsyncSession, user_id: int, dialog_id: int) -> Dialog | None:
-    return await session.scalar(
-        select(Dialog).where(Dialog.id == dialog_id, Dialog.user_id == user_id)
-    )
+async def _owned(
+    session: AsyncSession, user_id: int, dialog_id: int, *, for_update: bool = False
+) -> Dialog | None:
+    query = select(Dialog).where(Dialog.id == dialog_id, Dialog.user_id == user_id)
+    # A turn and a finish from different clients must see each other's committed history.
+    if for_update:
+        query = query.with_for_update()
+    return await session.scalar(query)
 
 
 async def _messages(session: AsyncSession, dialog_id: int) -> list[DialogMessage]:
